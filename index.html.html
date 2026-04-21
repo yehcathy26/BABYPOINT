@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寶貝集點站 ⭐</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pc1:#FF6EB4;--pc2:#FF9ED2;--pc3:#FFD6EC;
+  --mj1:#3B82F6;--mj2:#60A5FA;--mj3:#DBEAFE;
+  --mint:#34D399;--sun:#FBBF24;--green:#10B981;
+  --bg:#F5F4FF;--card:#FFFFFF;--text:#1E1B2E;--muted:#6B7280;
+  --border:#E8E4F0;--shadow:0 4px 24px rgba(0,0,0,.07);--shadowL:0 12px 48px rgba(0,0,0,.13);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* LOCK */
+#lockScreen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  background:linear-gradient(160deg,#0d0d1a 0%,#1a1040 50%,#0f2460 100%);
+}
+#lockScreen.out{animation:lOut .5s forwards;}
+@keyframes lOut{to{opacity:0;pointer-events:none;}}
+.lock-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:#fff;text-align:center;}
+.lock-title em{font-style:normal;font-size:2.8rem;display:block;}
+
+.role-box{
+  background:rgba(255,255,255,.08);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.15);border-radius:26px;
+  padding:28px 32px;min-width:290px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.rl-label{color:rgba(255,255,255,.6);font-size:.78rem;font-weight:700;letter-spacing:.08em;}
+.role-cards{display:flex;gap:10px;}
+.rc{
+  flex:1;min-width:100px;padding:14px 10px;
+  background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.18);
+  border-radius:16px;cursor:pointer;text-align:center;color:#fff;transition:all .22s;
+}
+.rc:hover{background:rgba(255,255,255,.18);transform:translateY(-3px);}
+.rc.sel{border-color:#FBBF24;background:rgba(251,191,36,.18);}
+.rc .re{font-size:1.9rem;display:block;margin-bottom:5px;}
+.rc .rn{font-weight:800;font-size:.88rem;}
+.rc .rs{font-size:.7rem;opacity:.6;margin-top:2px;}
+
+.fid-btn{
+  width:76px;height:76px;border-radius:50%;
+  background:rgba(255,255,255,.14);border:3px solid rgba(255,255,255,.45);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.5rem;cursor:pointer;transition:all .3s;
+  position:relative;overflow:hidden;
+}
+.fid-btn:hover{transform:scale(1.07);background:rgba(255,255,255,.22);}
+.fid-btn.scan::after{
+  content:'';position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(transparent,rgba(255,255,255,.5),transparent);
+  animation:sc 1s linear infinite;
+}
+@keyframes sc{from{transform:translateY(-100%)}to{transform:translateY(100%)}}
+.lmsg{color:rgba(255,255,255,.7);font-size:.82rem;font-weight:600;}
+.lhint{color:rgba(255,255,255,.45);font-size:.76rem;cursor:pointer;text-decoration:underline;}
+.pin-wrap{display:none;flex-direction:column;align-items:center;gap:9px;width:100%;}
+.pin-wrap.show{display:flex;}
+.pin-inp{
+  background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.28);
+  border-radius:11px;padding:9px 16px;color:#fff;font-size:1.3rem;
+  text-align:center;letter-spacing:.4em;width:170px;outline:none;
+}
+.pin-inp::placeholder{letter-spacing:.1em;font-size:.88rem;color:rgba(255,255,255,.35);}
+.pin-go{
+  background:rgba(255,255,255,.88);color:#1a1a2e;
+  border:none;border-radius:11px;padding:8px 26px;
+  font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;cursor:pointer;
+}
+.pin-err{color:#FCD34D;font-size:.78rem;display:none;}
+.lgo-btn{
+  background:linear-gradient(135deg,#FBBF24,#F59E0B);border:none;border-radius:15px;
+  padding:13px 38px;color:#1a1a2e;font-family:'Nunito',sans-serif;
+  font-size:.95rem;font-weight:900;cursor:pointer;letter-spacing:.04em;
+  transition:all .22s;box-shadow:0 6px 20px rgba(251,191,36,.35);
+}
+.lgo-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(251,191,36,.5);}
+.rne-row{display:flex;gap:8px;opacity:.55;}
+.rne{
+  background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:9px;padding:5px 10px;color:#fff;font-family:'Nunito',sans-serif;
+  font-size:.78rem;width:120px;outline:none;text-align:center;
+}
+.rne::placeholder{color:rgba(255,255,255,.35);}
+
+/* HEADER */
+header{
+  background:linear-gradient(135deg,#1a1a2e,#0f3460);
+  padding:13px 18px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.hl{display:flex;align-items:center;gap:9px;}
+.hlogo{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:#fff;}
+.huser{
+  background:rgba(255,255,255,.12);border-radius:18px;
+  padding:3px 11px;color:rgba(255,255,255,.82);font-size:.78rem;font-weight:700;
+}
+.hr{display:flex;gap:7px;}
+.hico{
+  width:38px;height:38px;border-radius:11px;
+  background:rgba(255,255,255,.12);border:none;cursor:pointer;
+  font-size:1.05rem;display:flex;align-items:center;justify-content:center;
+  color:#fff;transition:all .2s;
+}
+.hico:hover{background:rgba(255,255,255,.24);transform:scale(1.08);}
+
+/* MAIN / TABS */
+main{padding:18px 14px;max-width:800px;margin:0 auto;}
+.tabs{
+  display:flex;gap:5px;margin-bottom:18px;
+  background:var(--card);border-radius:16px;padding:5px;box-shadow:var(--shadow);
+  overflow-x:auto;
+}
+.tab{
+  flex:1;min-width:65px;padding:8px 4px;border:none;border-radius:11px;
+  font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;
+  cursor:pointer;transition:all .22s;background:transparent;color:var(--muted);white-space:nowrap;
+}
+.tab.active{color:#fff;transform:scale(1.02);}
+.tab[data-t="沛辰"].active{background:linear-gradient(135deg,var(--pc1),var(--pc2));}
+.tab[data-t="孟均"].active{background:linear-gradient(135deg,var(--mj1),var(--mj2));}
+.tab[data-t="rewards"].active{background:linear-gradient(135deg,#34D399,#10B981);}
+.tab[data-t="rules"].active{background:linear-gradient(135deg,#F59E0B,#FBBF24);}
+.panel{display:none;}
+.panel.active{display:block;animation:fup .3s ease;}
+@keyframes fup{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+
+/* SCORE CARD */
+.score-card{
+  border-radius:26px;padding:24px 22px;
+  display:flex;align-items:center;gap:16px;
+  box-shadow:var(--shadowL);margin-bottom:16px;position:relative;overflow:hidden;
+}
+.score-card::before,.score-card::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.1);}
+.score-card::before{width:170px;height:170px;top:-50px;right:-50px;}
+.score-card::after{width:90px;height:90px;bottom:-25px;left:55px;}
+.sc-pc{background:linear-gradient(135deg,#FF6EB4,#FF9ED2);}
+.sc-mj{background:linear-gradient(135deg,#3B82F6,#60A5FA);}
+.cav{
+  width:66px;height:66px;border-radius:50%;
+  background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.45);
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.2rem;flex-shrink:0;position:relative;z-index:1;
+}
+.ci{flex:1;color:#fff;position:relative;z-index:1;}
+.cn{font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;}
+.cs{font-size:.8rem;opacity:.78;}
+.cstar-row{display:flex;gap:2px;margin-top:4px;flex-wrap:wrap;}
+.cstar{font-size:.95rem;}
+.cscore{text-align:right;position:relative;z-index:1;}
+.cbig{font-family:'Baloo 2',cursive;font-size:2.8rem;font-weight:900;color:#fff;line-height:1;text-shadow:0 4px 12px rgba(0,0,0,.2);}
+.cunit{font-size:.78rem;color:rgba(255,255,255,.78);}
+
+/* CARD */
+.card{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-title{
+  font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;
+  margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;
+}
+.frow{display:flex;flex-direction:column;gap:10px;}
+.fgroup{display:flex;flex-direction:column;gap:4px;}
+.fgroup label{font-size:.76rem;font-weight:700;color:var(--muted);letter-spacing:.05em;}
+.fctl{
+  border:2px solid var(--border);border-radius:12px;
+  padding:9px 13px;font-family:'Nunito',sans-serif;font-size:.9rem;
+  outline:none;transition:border .2s;background:#fafafa;color:var(--text);
+}
+.fctl:focus{border-color:var(--pc1);background:#fff;}
+.fctl.mj:focus{border-color:var(--mj1);}
+select.fctl{cursor:pointer;}
+.pts-row{display:flex;gap:7px;align-items:flex-end;}
+.pts-row .fgroup:first-child{flex:1;}
+.sbtn{
+  width:40px;height:40px;border-radius:10px;border:2px solid var(--border);
+  font-size:1.25rem;cursor:pointer;transition:all .2s;background:#fafafa;
+  display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;
+}
+.sbtn.sp{border-color:#34D399;color:#34D399;}
+.sbtn.sm{border-color:#F87171;color:#F87171;}
+.sbtn.sp.on{background:#34D399;color:#fff;}
+.sbtn.sm.on{background:#F87171;color:#fff;}
+.sub-btn{
+  border:none;border-radius:13px;padding:11px;
+  font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;
+  cursor:pointer;transition:all .22s;color:#fff;width:100%;
+}
+.sub-btn.pcb{background:linear-gradient(135deg,#FF6EB4,#FF9ED2);}
+.sub-btn.mjb{background:linear-gradient(135deg,#3B82F6,#60A5FA);}
+.sub-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.14);}
+
+/* HISTORY */
+.hist-list{display:flex;flex-direction:column;gap:6px;max-height:290px;overflow-y:auto;}
+.hi{
+  display:flex;align-items:center;gap:9px;
+  padding:8px 11px;border-radius:11px;
+  background:#fafafa;border:1.5px solid var(--border);animation:fup .2s ease;
+}
+.hi-ico{font-size:1.25rem;flex-shrink:0;}
+.hi-inf{flex:1;}
+.hi-rsn{font-weight:700;font-size:.85rem;}
+.hi-meta{font-size:.71rem;color:var(--muted);margin-top:1px;}
+.hi-who{font-size:.68rem;background:var(--border);border-radius:5px;padding:1px 5px;}
+.hi-pts{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;flex-shrink:0;}
+.hi-pts.pos{color:#10B981;}
+.hi-pts.neg{color:#F87171;}
+.empty{text-align:center;color:var(--muted);font-size:.86rem;padding:16px 0;}
+
+/* REWARDS */
+.rw-bar{
+  display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;
+  background:var(--card);border-radius:16px;padding:13px 16px;box-shadow:var(--shadow);
+}
+.rw-si{display:flex;align-items:center;gap:7px;}
+.rw-dot{width:11px;height:11px;border-radius:50%;}
+.rw-dot-pc{background:linear-gradient(135deg,var(--pc1),var(--pc2));}
+.rw-dot-mj{background:linear-gradient(135deg,var(--mj1),var(--mj2));}
+.rw-num{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;}
+.rw-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.rw-hdr h2{font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:800;}
+.btn-add{
+  background:linear-gradient(135deg,#FBBF24,#F59E0B);
+  border:none;border-radius:12px;padding:8px 14px;
+  font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;
+  cursor:pointer;color:#1a1a2e;transition:all .22s;
+}
+.btn-add:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(251,191,36,.35);}
+.rw-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rw-item{
+  background:var(--card);border-radius:18px;padding:14px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+  transition:all .22s;border:2px solid transparent;
+}
+.rw-item:hover{transform:translateY(-3px);box-shadow:var(--shadowL);border-color:var(--mj2);}
+.rw-del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:.85rem;opacity:.3;transition:.2s;}
+.rw-del:hover{opacity:1;}
+.rw-emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.rw-name{font-weight:800;font-size:.88rem;margin-bottom:3px;}
+.rw-pts{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;color:var(--mj1);}
+.rdm-btn{
+  display:block;width:100%;margin-top:8px;
+  border:2px solid var(--mj1);background:none;border-radius:8px;padding:5px;
+  font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:700;
+  color:var(--mj1);cursor:pointer;transition:all .2s;
+}
+.rdm-btn:hover{background:var(--mj1);color:#fff;}
+
+/* RULES */
+.rl-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.rl-hdr h2{font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:800;}
+.btn-add-rl{
+  background:linear-gradient(135deg,#F59E0B,#FBBF24);
+  border:none;border-radius:12px;padding:8px 14px;
+  font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;
+  cursor:pointer;color:#1a1a2e;transition:all .22s;
+}
+.btn-add-rl:hover{transform:translateY(-2px);}
+.rl-list{display:flex;flex-direction:column;gap:9px;}
+.rl-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border-radius:15px;padding:13px 14px;
+  box-shadow:var(--shadow);border-left:5px solid var(--sun);transition:all .2s;
+}
+.rl-item:hover{box-shadow:var(--shadowL);}
+.rl-item.neg{border-left-color:#F87171;}
+.ri-ico{font-size:1.7rem;flex-shrink:0;}
+.ri-info{flex:1;}
+.ri-name{font-weight:800;font-size:.92rem;}
+.ri-desc{font-size:.73rem;color:var(--muted);margin-top:1px;}
+.ri-badge{
+  font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;
+  padding:3px 11px;border-radius:18px;flex-shrink:0;
+}
+.ri-badge.pos{background:#D1FAE5;color:#065F46;}
+.ri-badge.neg{background:#FEE2E2;color:#991B1B;}
+.ri-acts{display:flex;gap:5px;flex-shrink:0;}
+.ri-ab{
+  background:none;border:1.5px solid var(--border);border-radius:7px;
+  width:28px;height:28px;cursor:pointer;font-size:.8rem;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.ri-ab:hover{background:var(--border);}
+.rules-note{
+  margin-top:14px;background:linear-gradient(135deg,#FFF7ED,#FFFBEB);
+  border:1.5px solid #FDE68A;border-radius:14px;padding:12px 14px;
+}
+.rules-note p{font-size:.8rem;color:#92400E;font-weight:600;line-height:1.7;}
+
+/* DRIVE */
+.drive-sect{background:var(--card);border-radius:18px;padding:18px;box-shadow:var(--shadow);margin-top:14px;}
+.drive-sect h3{font-family:'Baloo 2',cursive;font-size:.98rem;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.drive-btns{display:flex;gap:7px;flex-wrap:wrap;}
+.dbtn{
+  flex:1;min-width:110px;padding:9px 10px;
+  border:2px solid var(--border);border-radius:11px;background:none;
+  font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.dbtn:hover{background:#f0f6ff;border-color:var(--mj2);}
+.dbtn.primary{background:linear-gradient(135deg,#4285F4,#34A853);color:#fff;border:none;}
+.dbtn.primary:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(66,133,244,.28);}
+.drive-st{font-size:.73rem;color:var(--muted);margin-top:7px;}
+
+/* MODAL */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  backdrop-filter:blur(4px);z-index:500;display:none;
+  align-items:center;justify-content:center;padding:14px;
+}
+.overlay.show{display:flex;animation:fadein .2s;}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--card);border-radius:24px;padding:26px;
+  max-width:370px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.22);
+  animation:popin .26s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popin{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.modal h3{font-family:'Baloo 2',cursive;font-size:1.15rem;margin-bottom:16px;}
+.m-acts{display:flex;gap:7px;margin-top:16px;}
+.btn-c{
+  flex:1;padding:10px;border:2px solid var(--border);background:none;
+  border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;
+}
+.btn-c:hover{background:var(--border);}
+.btn-ok{
+  flex:1;padding:10px;border:none;
+  background:linear-gradient(135deg,#3B82F6,#60A5FA);
+  border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .2s;
+}
+.btn-ok:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(59,130,246,.28);}
+
+/* TOAST / CONFETTI */
+.toast{
+  position:fixed;bottom:26px;left:50%;
+  transform:translateX(-50%) translateY(68px);
+  background:#1E1B2E;color:#fff;padding:9px 20px;
+  border-radius:50px;font-weight:700;font-size:.86rem;
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9000;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.cf{position:fixed;pointer-events:none;z-index:9998;opacity:1;animation:cff 2s ease-in forwards;}
+@keyframes cff{to{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+@media(max-width:480px){.rw-grid{grid-template-columns:1fr;}.role-cards{gap:7px;}.rc{min-width:88px;padding:11px 7px;}}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOCK ═══ -->
+<div id="lockScreen">
+  <div class="lock-title"><em>🌟</em>寶貝集點站</div>
+
+  <div class="role-box">
+    <p class="rl-label">請選擇身份登入</p>
+    <div class="role-cards">
+      <div class="rc sel" id="rc-dad" onclick="selRole('dad')">
+        <span class="re">👨</span>
+        <div class="rn" id="dadLbl">爸爸</div>
+        <div class="rs">管理員</div>
+      </div>
+      <div class="rc" id="rc-mom" onclick="selRole('mom')">
+        <span class="re">👩</span>
+        <div class="rn" id="momLbl">媽媽</div>
+        <div class="rs">管理員</div>
+      </div>
+    </div>
+
+    <div id="faceWrap" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;">
+      <p class="lmsg" id="lmsg">點擊解鎖 或 輸入密碼</p>
+      <button class="fid-btn" id="fidBtn" onclick="startFace()">🔒</button>
+      <span class="lhint" onclick="showPin()">改用密碼</span>
+    </div>
+    <div class="pin-wrap" id="pinWrap">
+      <input class="pin-inp" type="password" id="pinInp" maxlength="6" placeholder="輸入 PIN">
+      <button class="pin-go" onclick="checkPin()">確認</button>
+      <p class="pin-err" id="pinErr">密碼錯誤</p>
+      <span class="lhint" onclick="showFace()">使用 Face ID</span>
+    </div>
+    <button class="lgo-btn" onclick="tryUnlock()">進入 →</button>
+  </div>
+
+  <div class="rne-row">
+    <input class="rne" id="dadEdit" value="爸爸" placeholder="爸爸稱呼" oninput="updRoleName('dad')">
+    <input class="rne" id="momEdit" value="媽媽" placeholder="媽媽稱呼" oninput="updRoleName('mom')">
+  </div>
+</div>
+
+<!-- ═══ HEADER ═══ -->
+<header>
+  <div class="hl">
+    <div class="hlogo">🌟 寶貝集點站</div>
+    <div class="huser" id="huser">👨 爸爸</div>
+  </div>
+  <div class="hr">
+    <button class="hico" onclick="openDriveModal()">☁️</button>
+    <button class="hico" onclick="lockApp()">🔒</button>
+  </div>
+</header>
+
+<main>
+  <div class="tabs">
+    <button class="tab active" data-t="沛辰"   onclick="sw('沛辰')">🌸 沛辰</button>
+    <button class="tab"        data-t="孟均"   onclick="sw('孟均')">🚀 孟均</button>
+    <button class="tab"        data-t="rewards" onclick="sw('rewards')">🎁 獎勵</button>
+    <button class="tab"        data-t="rules"   onclick="sw('rules')">📋 規則</button>
+  </div>
+
+  <!-- 沛辰 (pink girl) -->
+  <div class="panel active" id="panel-沛辰">
+    <div class="score-card sc-pc">
+      <div class="cav">🌸</div>
+      <div class="ci">
+        <div class="cn">沛辰</div>
+        <div class="cs">女生・累積點數</div>
+        <div class="cstar-row" id="stars-沛辰"></div>
+      </div>
+      <div class="cscore">
+        <div class="cbig" id="score-沛辰">0</div>
+        <div class="cunit">點</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">✏️ 加減點數 <span style="font-size:.72rem;font-weight:600;color:var(--muted);" id="giver-沛辰"></span></div>
+      <div class="frow">
+        <div class="fgroup"><label>行為項目</label>
+          <select class="fctl" id="reason-沛辰" onchange="onRsn('沛辰')">
+            <option value="">─ 選擇項目 ─</option>
+          </select>
+        </div>
+        <div class="fgroup" id="cg-沛辰" style="display:none"><label>自訂事由</label>
+          <input class="fctl" type="text" id="cr-沛辰" placeholder="輸入事由">
+        </div>
+        <div class="fgroup"><label>點數與加減</label>
+          <div class="pts-row">
+            <div class="fgroup"><input class="fctl" type="number" id="pts-沛辰" min="1" max="999" value="1"></div>
+            <button class="sbtn sp on" id="p-沛辰"  onclick="setSgn('沛辰','plus')">＋</button>
+            <button class="sbtn sm"    id="m-沛辰"  onclick="setSgn('沛辰','minus')">－</button>
+          </div>
+        </div>
+        <div class="fgroup"><label>備注（選填）</label>
+          <input class="fctl" type="text" id="note-沛辰" placeholder="例：今天主動刷牙，很棒！">
+        </div>
+        <button class="sub-btn pcb" onclick="addPts('沛辰')">⭐ 記錄點數</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 記錄
+        <button style="font-size:.7rem;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;padding:3px 7px;border-radius:7px;" onclick="clrHist('沛辰')">清除全部</button>
+      </div>
+      <div class="hist-list" id="history-沛辰"><p class="empty">還沒有記錄喔！</p></div>
+    </div>
+  </div>
+
+  <!-- 孟均 (blue boy) -->
+  <div class="panel" id="panel-孟均">
+    <div class="score-card sc-mj">
+      <div class="cav">🚀</div>
+      <div class="ci">
+        <div class="cn">孟均</div>
+        <div class="cs">男生・累積點數</div>
+        <div class="cstar-row" id="stars-孟均"></div>
+      </div>
+      <div class="cscore">
+        <div class="cbig" id="score-孟均">0</div>
+        <div class="cunit">點</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">✏️ 加減點數 <span style="font-size:.72rem;font-weight:600;color:var(--muted);" id="giver-孟均"></span></div>
+      <div class="frow">
+        <div class="fgroup"><label>行為項目</label>
+          <select class="fctl mj" id="reason-孟均" onchange="onRsn('孟均')">
+            <option value="">─ 選擇項目 ─</option>
+          </select>
+        </div>
+        <div class="fgroup" id="cg-孟均" style="display:none"><label>自訂事由</label>
+          <input class="fctl mj" type="text" id="cr-孟均" placeholder="輸入事由">
+        </div>
+        <div class="fgroup"><label>點數與加減</label>
+          <div class="pts-row">
+            <div class="fgroup"><input class="fctl mj" type="number" id="pts-孟均" min="1" max="999" value="1"></div>
+            <button class="sbtn sp on" id="p-孟均"  onclick="setSgn('孟均','plus')">＋</button>
+            <button class="sbtn sm"    id="m-孟均"  onclick="setSgn('孟均','minus')">－</button>
+          </div>
+        </div>
+        <div class="fgroup"><label>備注（選填）</label>
+          <input class="fctl mj" type="text" id="note-孟均" placeholder="例：考試前很認真複習！">
+        </div>
+        <button class="sub-btn mjb" onclick="addPts('孟均')">⭐ 記錄點數</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 記錄
+        <button style="font-size:.7rem;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;padding:3px 7px;border-radius:7px;" onclick="clrHist('孟均')">清除全部</button>
+      </div>
+      <div class="hist-list" id="history-孟均"><p class="empty">還沒有記錄喔！</p></div>
+    </div>
+  </div>
+
+  <!-- 獎勵 -->
+  <div class="panel" id="panel-rewards">
+    <div class="rw-bar">
+      <div class="rw-si"><div class="rw-dot rw-dot-pc"></div><span style="font-weight:700;font-size:.86rem;">沛辰</span><span class="rw-num" id="rsc-沛辰">0</span><span style="font-size:.76rem;color:var(--muted);">點</span></div>
+      <div class="rw-si"><div class="rw-dot rw-dot-mj"></div><span style="font-weight:700;font-size:.86rem;">孟均</span><span class="rw-num" id="rsc-孟均">0</span><span style="font-size:.76rem;color:var(--muted);">點</span></div>
+    </div>
+    <div class="rw-hdr"><h2>🎁 獎勵兌換</h2><button class="btn-add" onclick="openRwModal()">＋ 新增獎勵</button></div>
+    <div class="rw-grid" id="rwGrid"></div>
+    <div class="drive-sect">
+      <h3>☁️ Google 雲端備份</h3>
+      <div class="drive-btns">
+        <button class="dbtn primary" onclick="connectDrive()">🔗 連接 Google</button>
+        <button class="dbtn" onclick="backupDrive()">⬆️ 備份</button>
+        <button class="dbtn" onclick="restoreDrive()">⬇️ 還原</button>
+      </div>
+      <p class="drive-st" id="driveSt">尚未連接 Google 帳戶</p>
+    </div>
+  </div>
+
+  <!-- 規則 -->
+  <div class="panel" id="panel-rules">
+    <div class="rl-hdr"><h2>📋 集點規則</h2><button class="btn-add-rl" onclick="openRlModal()">＋ 新增規則</button></div>
+    <div class="rl-list" id="rlList"></div>
+    <div class="rules-note">
+      <p>💡 <strong>說明：</strong>此處設定的規則會自動出現在沛辰、孟均的下拉選單中，選擇後點數會自動帶入，也可以手動修改。</p>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ MODALS ═══ -->
+<div class="overlay" id="rwModal">
+  <div class="modal"><h3>🎁 新增獎勵</h3>
+    <div class="frow">
+      <div class="fgroup"><label>獎勵名稱</label><input class="fctl" id="rwN" type="text" placeholder="例：看一部電影"></div>
+      <div class="fgroup"><label>表情符號</label><input class="fctl" id="rwE" type="text" placeholder="🎬" maxlength="4" style="font-size:1.2rem;text-align:center;"></div>
+      <div class="fgroup"><label>所需點數</label><input class="fctl" id="rwP" type="number" min="1" value="10"></div>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('rwModal')">取消</button>
+      <button class="btn-ok" onclick="addRw()">新增</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="rlModal">
+  <div class="modal"><h3>📋 新增集點規則</h3>
+    <div class="frow">
+      <div class="fgroup"><label>行為名稱</label><input class="fctl" id="rlN" type="text" placeholder="例：完成回家作業"></div>
+      <div class="fgroup"><label>表情符號</label><input class="fctl" id="rlE" type="text" placeholder="📚" maxlength="4" style="font-size:1.2rem;text-align:center;"></div>
+      <div class="fgroup"><label>說明（選填）</label><input class="fctl" id="rlD" type="text" placeholder="例：每天完成當天作業"></div>
+      <div class="fgroup"><label>點數</label>
+        <div class="pts-row">
+          <div class="fgroup"><input class="fctl" id="rlP" type="number" min="1" value="1"></div>
+          <button class="sbtn sp on" id="rlPs" onclick="setRlSgn('plus')">＋</button>
+          <button class="sbtn sm"    id="rlMs" onclick="setRlSgn('minus')">－</button>
+        </div>
+      </div>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('rlModal')">取消</button>
+      <button class="btn-ok" onclick="addRl()">新增</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="editRlModal">
+  <div class="modal"><h3>✏️ 編輯規則</h3>
+    <input type="hidden" id="editRlId">
+    <div class="frow">
+      <div class="fgroup"><label>行為名稱</label><input class="fctl" id="editRlN" type="text"></div>
+      <div class="fgroup"><label>表情符號</label><input class="fctl" id="editRlE" type="text" maxlength="4" style="font-size:1.2rem;text-align:center;"></div>
+      <div class="fgroup"><label>說明</label><input class="fctl" id="editRlD" type="text"></div>
+      <div class="fgroup"><label>點數</label>
+        <div class="pts-row">
+          <div class="fgroup"><input class="fctl" id="editRlP" type="number" min="1" value="1"></div>
+          <button class="sbtn sp on" id="editRlPs" onclick="setEditRlSgn('plus')">＋</button>
+          <button class="sbtn sm"    id="editRlMs" onclick="setEditRlSgn('minus')">－</button>
+        </div>
+      </div>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('editRlModal')">取消</button>
+      <button class="btn-ok" onclick="saveEditRl()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="rdmModal">
+  <div class="modal">
+    <h3 id="rdmTitle">🎁 兌換獎勵</h3>
+    <p id="rdmMsg" style="color:var(--muted);font-size:.85rem;margin-bottom:12px;"></p>
+    <div class="fgroup"><label>選擇兒童</label>
+      <select class="fctl" id="rdmChild">
+        <option value="沛辰">🌸 沛辰</option>
+        <option value="孟均">🚀 孟均</option>
+      </select>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('rdmModal')">取消</button>
+      <button class="btn-ok" onclick="confirmRdm()">確認兌換</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="driveModal">
+  <div class="modal"><h3>☁️ Google 雲端備份</h3>
+    <p style="color:var(--muted);font-size:.82rem;margin-bottom:12px;line-height:1.7;">
+      備份至 Google Drive 需先至 Google Cloud Console<br>建立 OAuth2 Client ID 並填入程式碼。
+    </p>
+    <div style="display:flex;flex-direction:column;gap:7px;">
+      <button class="dbtn primary" style="min-width:0;" onclick="connectDrive();closeM('driveModal')">🔗 連接 Google 帳戶</button>
+      <button class="dbtn" style="min-width:0;" onclick="backupDrive();closeM('driveModal')">⬆️ 備份現有資料</button>
+      <button class="dbtn" style="min-width:0;" onclick="restoreDrive();closeM('driveModal')">⬇️ 從雲端還原</button>
+    </div>
+    <div class="m-acts" style="margin-top:12px;">
+      <button class="btn-c" style="flex:none;width:100%;" onclick="closeM('driveModal')">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ─── DATA ─── */
+let D = {
+  scores:{沛辰:0,孟均:0},
+  history:{沛辰:[],孟均:[]},
+  rewards:[
+    {id:1,emoji:'🍦',name:'吃一個冰淇淋',pts:5},
+    {id:2,emoji:'🎮',name:'玩30分鐘遊戲',pts:10},
+    {id:3,emoji:'🎬',name:'選一部電影',pts:15},
+    {id:4,emoji:'🛍️',name:'買一個小玩具',pts:30},
+  ],
+  rules:[
+    {id:1,emoji:'🦷',name:'晚上刷牙',desc:'每天晚上刷牙',pts:1,sign:'plus'},
+    {id:2,emoji:'💯',name:'考試滿分',desc:'任何科目滿分',pts:5,sign:'plus'},
+    {id:3,emoji:'📝',name:'考試90分',desc:'任何科目90分以上',pts:3,sign:'plus'},
+    {id:4,emoji:'📚',name:'完成回家作業',desc:'當天作業全部完成',pts:2,sign:'plus'},
+    {id:5,emoji:'😤',name:'頂嘴',desc:'對長輩不禮貌',pts:1,sign:'minus'},
+  ],
+  rwCnt:5,rlCnt:6,
+  roles:{dad:'爸爸',mom:'媽媽'},
+  pin:'1234',
+  driveCn:false,
+};
+let role='dad';
+let sgn={沛辰:'plus',孟均:'plus'};
+let rlSgn='plus',editRlSgn='plus';
+let rdmTarget=null;
+
+function save(){try{localStorage.setItem('kpv3',JSON.stringify(D));}catch(e){}}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('kpv3'));
+    if(d){
+      D=Object.assign({},D,d);
+      D.rules=(D.rules||[]).map(r=>({sign:'plus',...r}));
+    }
+  }catch(e){}
+}
+
+/* ─── LOCK / ROLE ─── */
+function selRole(r){
+  role=r;
+  document.getElementById('rc-dad').classList.toggle('sel',r==='dad');
+  document.getElementById('rc-mom').classList.toggle('sel',r==='mom');
+}
+function updRoleName(r){
+  const v=document.getElementById(r==='dad'?'dadEdit':'momEdit').value||(r==='dad'?'爸爸':'媽媽');
+  D.roles[r]=v;
+  document.getElementById(r==='dad'?'dadLbl':'momLbl').textContent=v;
+  save();
+}
+function getRN(){return D.roles[role]||(role==='dad'?'爸爸':'媽媽');}
+
+function startFace(){
+  const b=document.getElementById('fidBtn');
+  b.classList.add('scan');b.textContent='👁';
+  document.getElementById('lmsg').textContent='掃描中…';
+  if(window.PublicKeyCredential){
+    navigator.credentials.get({publicKey:{challenge:crypto.getRandomValues(new Uint8Array(32)),timeout:60000,userVerification:'required',rpId:location.hostname||'localhost'}})
+      .then(()=>doUnlock()).catch(()=>simFace());
+  }else simFace();
+}
+function simFace(){setTimeout(()=>{document.getElementById('fidBtn').textContent='✅';doUnlock();},1300);}
+
+function tryUnlock(){
+  if(document.getElementById('pinWrap').classList.contains('show')){checkPin();}
+  else{startFace();}
+}
+function checkPin(){
+  if(document.getElementById('pinInp').value===D.pin){doUnlock();}
+  else{document.getElementById('pinErr').style.display='block';document.getElementById('pinInp').value='';}
+}
+function doUnlock(){
+  document.getElementById('lockScreen').classList.add('out');
+  setTimeout(()=>{document.getElementById('lockScreen').style.display='none';},500);
+  const em=role==='dad'?'👨':'👩';
+  document.getElementById('huser').textContent=em+' '+getRN();
+  ['沛辰','孟均'].forEach(c=>{document.getElementById('giver-'+c).textContent='由 '+getRN()+' 給分';});
+}
+function lockApp(){
+  const ls=document.getElementById('lockScreen');
+  ls.style.display='flex';ls.style.opacity='1';ls.classList.remove('out');
+  document.getElementById('fidBtn').textContent='🔒';
+  document.getElementById('fidBtn').classList.remove('scan');
+  document.getElementById('lmsg').textContent='點擊解鎖 或 輸入密碼';
+  document.getElementById('pinInp').value='';
+  document.getElementById('pinErr').style.display='none';
+  showFace();
+  document.getElementById('dadEdit').value=D.roles.dad||'爸爸';
+  document.getElementById('momEdit').value=D.roles.mom||'媽媽';
+  document.getElementById('dadLbl').textContent=D.roles.dad||'爸爸';
+  document.getElementById('momLbl').textContent=D.roles.mom||'媽媽';
+}
+function showPin(){document.getElementById('faceWrap').style.display='none';document.getElementById('pinWrap').classList.add('show');document.getElementById('pinInp').focus();}
+function showFace(){document.getElementById('faceWrap').style.display='flex';document.getElementById('pinWrap').classList.remove('show');}
+document.getElementById('pinInp').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin();});
+
+/* ─── TABS ─── */
+function sw(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.tab[data-t="${t}"]`).classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t==='rewards')updRwScores();
+}
+
+/* ─── DROPDOWNS ─── */
+function buildDd(child){
+  const s=document.getElementById('reason-'+child);
+  const cur=s.value;
+  s.innerHTML='<option value="">─ 選擇項目 ─</option>';
+  D.rules.forEach(r=>{
+    const o=document.createElement('option');
+    o.value=r.name;
+    o.textContent=`${r.emoji} ${r.name}（${r.sign==='plus'?'+':'−'}${r.pts}點）`;
+    o.dataset.pts=r.pts;o.dataset.sign=r.sign;
+    s.appendChild(o);
+  });
+  const c=document.createElement('option');c.value='custom';c.textContent='✏️ 自訂…';
+  s.appendChild(c);s.value=cur;
+}
+function onRsn(child){
+  const s=document.getElementById('reason-'+child);
+  const o=s.options[s.selectedIndex];
+  document.getElementById('cg-'+child).style.display=s.value==='custom'?'flex':'none';
+  if(s.value&&s.value!=='custom'&&o.dataset.pts){
+    document.getElementById('pts-'+child).value=o.dataset.pts;
+    setSgn(child,o.dataset.sign||'plus');
+  }
+}
+
+/* ─── POINTS ─── */
+function setSgn(child,s){
+  sgn[child]=s;
+  document.getElementById('p-'+child).classList.toggle('on',s==='plus');
+  document.getElementById('m-'+child).classList.toggle('on',s==='minus');
+}
+function addPts(child){
+  const sel=document.getElementById('reason-'+child).value;
+  let rsn=sel;
+  if(sel==='custom'){rsn=document.getElementById('cr-'+child).value.trim();if(!rsn){toast('請輸入自訂事由');return;}}
+  if(!sel){toast('請選擇行為項目');return;}
+  const pts=parseInt(document.getElementById('pts-'+child).value)||0;
+  if(pts<=0){toast('點數需大於 0');return;}
+  const note=document.getElementById('note-'+child).value.trim();
+  const delta=sgn[child]==='plus'?pts:-pts;
+  D.scores[child]=Math.max(0,D.scores[child]+delta);
+  D.history[child].unshift({rsn,pts:delta,note,giver:getRN(),time:new Date().toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  save();renderScore(child);renderHist(child);
+  document.getElementById('reason-'+child).value='';
+  document.getElementById('pts-'+child).value='1';
+  document.getElementById('note-'+child).value='';
+  document.getElementById('cr-'+child).value='';
+  document.getElementById('cg-'+child).style.display='none';
+  setSgn(child,'plus');
+  if(delta>0){confetti();toast(`🌟 ${child} ＋${pts} 點！`);}else toast(`📉 ${child} −${pts} 點`);
+}
+
+/* ─── RENDER ─── */
+function renderScore(child){
+  document.getElementById('score-'+child).textContent=D.scores[child];
+  const n=Math.min(10,Math.floor(D.scores[child]/5));
+  document.getElementById('stars-'+child).innerHTML=Array.from({length:n},()=>'<span class="cstar">⭐</span>').join('');
+}
+function renderHist(child){
+  const el=document.getElementById('history-'+child);
+  const h=D.history[child];
+  if(!h.length){el.innerHTML='<p class="empty">還沒有記錄喔！</p>';return;}
+  el.innerHTML=h.slice(0,60).map(x=>`
+    <div class="hi">
+      <span class="hi-ico">${x.pts>0?'⬆️':'⬇️'}</span>
+      <div class="hi-inf">
+        <div class="hi-rsn">${x.rsn}</div>
+        <div class="hi-meta">${x.time}${x.giver?` <span class="hi-who">${x.giver}</span>`:''}${x.note?' · '+x.note:''}</div>
+      </div>
+      <div class="hi-pts ${x.pts>0?'pos':'neg'}">${x.pts>0?'+':''}${x.pts}</div>
+    </div>`).join('');
+}
+function clrHist(child){
+  if(!confirm(`確定清除 ${child} 的所有記錄？`))return;
+  D.history[child]=[];save();renderHist(child);toast('記錄已清除');
+}
+
+/* ─── REWARDS ─── */
+function renderRw(){
+  const g=document.getElementById('rwGrid');
+  if(!D.rewards.length){g.innerHTML='<p class="empty" style="grid-column:1/-1">還沒有獎勵項目</p>';return;}
+  g.innerHTML=D.rewards.map(r=>`
+    <div class="rw-item">
+      <button class="rw-del" onclick="delRw(${r.id})">✕</button>
+      <span class="rw-emoji">${r.emoji}</span>
+      <div class="rw-name">${r.name}</div>
+      <div class="rw-pts">⭐ ${r.pts} 點</div>
+      <button class="rdm-btn" onclick="openRdm(${r.id})">兌換</button>
+    </div>`).join('');
+}
+function updRwScores(){
+  document.getElementById('rsc-沛辰').textContent=D.scores['沛辰'];
+  document.getElementById('rsc-孟均').textContent=D.scores['孟均'];
+}
+function openRwModal(){document.getElementById('rwModal').classList.add('show');}
+function addRw(){
+  const n=document.getElementById('rwN').value.trim();
+  const e=document.getElementById('rwE').value.trim()||'🎁';
+  const p=parseInt(document.getElementById('rwP').value)||10;
+  if(!n){toast('請輸入獎勵名稱');return;}
+  D.rewards.push({id:D.rwCnt++,emoji:e,name:n,pts:p});
+  save();renderRw();
+  document.getElementById('rwN').value='';document.getElementById('rwE').value='';document.getElementById('rwP').value='10';
+  closeM('rwModal');toast('🎁 獎勵已新增！');
+}
+function delRw(id){D.rewards=D.rewards.filter(r=>r.id!==id);save();renderRw();toast('獎勵已刪除');}
+function openRdm(id){
+  rdmTarget=id;
+  const r=D.rewards.find(x=>x.id===id);
+  document.getElementById('rdmTitle').textContent=`🎁 兌換「${r.name}」`;
+  document.getElementById('rdmMsg').textContent=`需要 ${r.pts} 點。請選擇要兌換的孩子：`;
+  document.getElementById('rdmModal').classList.add('show');
+}
+function confirmRdm(){
+  const child=document.getElementById('rdmChild').value;
+  const r=D.rewards.find(x=>x.id===rdmTarget);
+  if(!r)return;
+  if(D.scores[child]<r.pts){toast(`${child} 點數不足（需 ${r.pts} 點）`);return;}
+  D.scores[child]-=r.pts;
+  D.history[child].unshift({rsn:`兌換：${r.name}`,pts:-r.pts,note:'',giver:getRN(),time:new Date().toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  save();renderScore(child);renderHist(child);updRwScores();
+  closeM('rdmModal');confetti();toast(`🎉 ${child} 成功兌換「${r.name}」！`);
+}
+
+/* ─── RULES ─── */
+function renderRl(){
+  const el=document.getElementById('rlList');
+  if(!D.rules.length){el.innerHTML='<p class="empty">還沒有規則</p>';return;}
+  el.innerHTML=D.rules.map(r=>`
+    <div class="rl-item ${r.sign==='minus'?'neg':''}">
+      <span class="ri-ico">${r.emoji}</span>
+      <div class="ri-info">
+        <div class="ri-name">${r.name}</div>
+        ${r.desc?`<div class="ri-desc">${r.desc}</div>`:''}
+      </div>
+      <div class="ri-badge ${r.sign==='plus'?'pos':'neg'}">${r.sign==='plus'?'+':'-'}${r.pts} 點</div>
+      <div class="ri-acts">
+        <button class="ri-ab" onclick="openEditRl(${r.id})">✏️</button>
+        <button class="ri-ab" onclick="delRl(${r.id})">🗑</button>
+      </div>
+    </div>`).join('');
+  ['沛辰','孟均'].forEach(c=>buildDd(c));
+}
+function setRlSgn(s){
+  rlSgn=s;
+  document.getElementById('rlPs').classList.toggle('on',s==='plus');
+  document.getElementById('rlMs').classList.toggle('on',s==='minus');
+}
+function setEditRlSgn(s){
+  editRlSgn=s;
+  document.getElementById('editRlPs').classList.toggle('on',s==='plus');
+  document.getElementById('editRlMs').classList.toggle('on',s==='minus');
+}
+function openRlModal(){
+  rlSgn='plus';setRlSgn('plus');
+  ['rlN','rlE','rlD'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rlP').value='1';
+  document.getElementById('rlModal').classList.add('show');
+}
+function addRl(){
+  const n=document.getElementById('rlN').value.trim();
+  const e=document.getElementById('rlE').value.trim()||'⭐';
+  const d=document.getElementById('rlD').value.trim();
+  const p=parseInt(document.getElementById('rlP').value)||1;
+  if(!n){toast('請輸入行為名稱');return;}
+  D.rules.push({id:D.rlCnt++,emoji:e,name:n,desc:d,pts:p,sign:rlSgn});
+  save();renderRl();closeM('rlModal');toast('📋 規則已新增！');
+}
+function openEditRl(id){
+  const r=D.rules.find(x=>x.id===id);
+  document.getElementById('editRlId').value=id;
+  document.getElementById('editRlN').value=r.name;
+  document.getElementById('editRlE').value=r.emoji;
+  document.getElementById('editRlD').value=r.desc||'';
+  document.getElementById('editRlP').value=r.pts;
+  editRlSgn=r.sign||'plus';setEditRlSgn(editRlSgn);
+  document.getElementById('editRlModal').classList.add('show');
+}
+function saveEditRl(){
+  const id=parseInt(document.getElementById('editRlId').value);
+  const i=D.rules.findIndex(x=>x.id===id);if(i<0)return;
+  D.rules[i]={...D.rules[i],
+    name:document.getElementById('editRlN').value.trim(),
+    emoji:document.getElementById('editRlE').value.trim()||'⭐',
+    desc:document.getElementById('editRlD').value.trim(),
+    pts:parseInt(document.getElementById('editRlP').value)||1,
+    sign:editRlSgn
+  };
+  save();renderRl();closeM('editRlModal');toast('✅ 規則已更新！');
+}
+function delRl(id){
+  if(!confirm('確定刪除此規則？'))return;
+  D.rules=D.rules.filter(r=>r.id!==id);save();renderRl();toast('規則已刪除');
+}
+
+/* ─── GOOGLE DRIVE ─── */
+const GID='YOUR_GOOGLE_CLIENT_ID_HERE';
+const GSCOPE='https://www.googleapis.com/auth/drive.appdata';
+let gTok=null;
+function connectDrive(){
+  if(GID==='YOUR_GOOGLE_CLIENT_ID_HERE'){toast('⚠️ 請先設定 Google Client ID');document.getElementById('driveSt').textContent='⚠️ 需設定 Client ID';return;}
+  const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';
+  s.onload=()=>{
+    const c=google.accounts.oauth2.initTokenClient({client_id:GID,scope:GSCOPE,callback:(res)=>{
+      if(res.access_token){gTok=res.access_token;D.driveCn=true;save();document.getElementById('driveSt').textContent='✅ 已連接 Google 帳戶';toast('✅ Google Drive 連接成功！');}
+    }});c.requestAccessToken();
+  };document.head.appendChild(s);
+}
+async function backupDrive(){
+  if(!gTok){toast('請先連接 Google 帳戶');return;}
+  try{
+    const fm=new FormData();
+    fm.append('metadata',new Blob([JSON.stringify({name:'kids-points-backup.json',parents:['appDataFolder']})],{type:'application/json'}));
+    fm.append('file',new Blob([JSON.stringify(D,null,2)],{type:'application/json'}));
+    const r=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:`Bearer ${gTok}`},body:fm});
+    if(r.ok){toast('☁️ 備份成功！');document.getElementById('driveSt').textContent=`✅ 上次備份：${new Date().toLocaleString('zh-TW')}`;}
+    else throw 0;
+  }catch{toast('備份失敗，請重新連接');}
+}
+async function restoreDrive(){
+  if(!gTok){toast('請先連接 Google 帳戶');return;}
+  try{
+    const ls=await fetch("https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&fields=files(id,name)&q=name='kids-points-backup.json'",{headers:{Authorization:`Bearer ${gTok}`}}).then(r=>r.json());
+    if(!ls.files?.length){toast('雲端找不到備份');return;}
+    const data=await fetch(`https://www.googleapis.com/drive/v3/files/${ls.files[0].id}?alt=media`,{headers:{Authorization:`Bearer ${gTok}`}}).then(r=>r.json());
+    D=data;save();init();toast('⬇️ 還原成功！');
+  }catch{toast('還原失敗，請重新連接');}
+}
+function openDriveModal(){document.getElementById('driveModal').classList.add('show');}
+
+/* ─── MODAL ─── */
+function closeM(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+
+/* ─── TOAST / CONFETTI ─── */
+let tt;
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2200);
+}
+function confetti(){
+  const cols=['#FFE66D','#FF6B6B','#4ECDC4','#A29BFE','#FD79A8','#55EFC4','#74B9FF','#FF6EB4','#3B82F6'];
+  for(let i=0;i<38;i++){
+    const c=document.createElement('div');c.className='cf';
+    c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[~~(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3000);
+  }
+}
+
+/* ─── INIT ─── */
+function init(){
+  document.getElementById('dadEdit').value=D.roles?.dad||'爸爸';
+  document.getElementById('momEdit').value=D.roles?.mom||'媽媽';
+  document.getElementById('dadLbl').textContent=D.roles?.dad||'爸爸';
+  document.getElementById('momLbl').textContent=D.roles?.mom||'媽媽';
+  ['沛辰','孟均'].forEach(c=>{buildDd(c);renderScore(c);renderHist(c);});
+  renderRw();renderRl();
+  if(D.driveCn)document.getElementById('driveSt').textContent='✅ 已連接（請重新授權以操作）';
+}
+load();init();
+</script>
+</body>
+</html>
