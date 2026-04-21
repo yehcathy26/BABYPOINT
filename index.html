@@ -371,6 +371,11 @@ select.fctl{cursor:pointer;}
         <div class="rn" id="momLbl">媽媽</div>
         <div class="rs">管理員</div>
       </div>
+<div id="faceWrap" style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;">
+      <p class="lmsg" id="lmsg">點擊解鎖 或 輸入密碼</p>
+      <button class="fid-btn" id="fidBtn" onclick="startFace()">🔒</button>
+      <span class="lhint" onclick="showPin()">改用密碼</span>
+    </div>
     </div>
     <div class="pin-wrap" id="pinWrap">
       <input class="pin-inp" type="password" id="pinInp" maxlength="6" placeholder="輸入 PIN">
