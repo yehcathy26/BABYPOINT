@@ -1,0 +1,1102 @@
+
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>寶貝集點站 ⭐</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pc1:#FF6EB4;--pc2:#FF9ED2;
+  --mj1:#3B82F6;--mj2:#60A5FA;
+  --mint:#34D399;--sun:#FBBF24;--green:#10B981;
+  --bg:#F5F4FF;--card:#FFFFFF;--text:#1E1B2E;--muted:#6B7280;
+  --border:#E8E4F0;--shadow:0 4px 24px rgba(0,0,0,.07);--shadowL:0 12px 48px rgba(0,0,0,.13);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── FIREBASE SETUP SCREEN ── */
+#setupScreen{
+  position:fixed;inset:0;z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:linear-gradient(160deg,#0d0d1a,#1a1040,#0f2460);
+  padding:20px;
+}
+#setupScreen.hide{display:none;}
+.setup-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;color:#fff;text-align:center;}
+.setup-title em{font-style:normal;font-size:2.8rem;display:block;}
+.setup-box{
+  background:rgba(255,255,255,.08);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.15);border-radius:26px;
+  padding:28px 30px;width:100%;max-width:360px;
+  display:flex;flex-direction:column;gap:14px;
+}
+.setup-box h2{font-family:'Baloo 2',cursive;color:#fff;font-size:1.15rem;text-align:center;}
+.setup-box p{color:rgba(255,255,255,.6);font-size:.78rem;line-height:1.7;text-align:center;}
+.setup-inp{
+  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.25);
+  border-radius:11px;padding:10px 14px;color:#fff;font-family:'Nunito',sans-serif;
+  font-size:.88rem;outline:none;width:100%;
+}
+.setup-inp::placeholder{color:rgba(255,255,255,.35);}
+.setup-inp:focus{border-color:#FBBF24;}
+.setup-btn{
+  background:linear-gradient(135deg,#FBBF24,#F59E0B);border:none;border-radius:13px;
+  padding:12px;color:#1a1a2e;font-family:'Nunito',sans-serif;
+  font-size:.95rem;font-weight:900;cursor:pointer;transition:all .22s;
+  box-shadow:0 6px 20px rgba(251,191,36,.3);
+}
+.setup-btn:hover{transform:translateY(-2px);}
+.setup-err{color:#FCD34D;font-size:.78rem;text-align:center;display:none;}
+.setup-skip{color:rgba(255,255,255,.4);font-size:.74rem;cursor:pointer;text-decoration:underline;text-align:center;}
+.setup-divider{display:flex;align-items:center;gap:10px;}
+.setup-divider span{color:rgba(255,255,255,.3);font-size:.75rem;white-space:nowrap;}
+.setup-divider::before,.setup-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.15);}
+.fb-status{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.06);border-radius:10px;padding:8px 12px;
+}
+.fb-dot{width:8px;height:8px;border-radius:50%;background:#6B7280;flex-shrink:0;}
+.fb-dot.on{background:#34D399;box-shadow:0 0 6px #34D399;}
+.fb-dot.err{background:#F87171;}
+.fb-txt{font-size:.76rem;color:rgba(255,255,255,.6);}
+
+/* ── HEADER ── */
+header{
+  background:linear-gradient(135deg,#1a1a2e,#0f3460);
+  padding:13px 18px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.25);
+}
+.hl{display:flex;align-items:center;gap:9px;}
+.hlogo{font-family:'Baloo 2',cursive;font-size:1.35rem;font-weight:800;color:#fff;}
+.huser{
+  background:rgba(255,255,255,.12);border-radius:18px;
+  padding:3px 11px;color:rgba(255,255,255,.82);font-size:.78rem;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.huser:hover{background:rgba(255,255,255,.22);}
+.fb-badge{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.1);border-radius:18px;
+  padding:3px 10px;font-size:.72rem;color:rgba(255,255,255,.7);font-weight:700;
+}
+.fb-badge-dot{width:6px;height:6px;border-radius:50%;background:#6B7280;}
+.fb-badge-dot.on{background:#34D399;box-shadow:0 0 5px #34D399;}
+.hr{display:flex;gap:7px;}
+.hico{
+  width:38px;height:38px;border-radius:11px;
+  background:rgba(255,255,255,.12);border:none;cursor:pointer;
+  font-size:1.05rem;display:flex;align-items:center;justify-content:center;
+  color:#fff;transition:all .2s;
+}
+.hico:hover{background:rgba(255,255,255,.24);transform:scale(1.08);}
+
+/* ── ROLE SWITCHER ── */
+.role-switcher-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  z-index:500;display:none;align-items:flex-end;justify-content:center;padding:0;
+}
+.role-switcher-overlay.show{display:flex;animation:fadeIn .2s;}
+.role-sheet{
+  background:var(--card);border-radius:24px 24px 0 0;padding:24px 20px 36px;
+  width:100%;max-width:480px;
+  animation:slideUp .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.role-sheet h3{font-family:'Baloo 2',cursive;font-size:1.1rem;margin-bottom:16px;text-align:center;}
+.role-btns{display:flex;gap:10px;}
+.rbtn{
+  flex:1;padding:16px 10px;border-radius:18px;border:2px solid var(--border);
+  background:none;cursor:pointer;transition:all .22s;text-align:center;
+}
+.rbtn:hover{border-color:var(--mj1);background:#f0f6ff;}
+.rbtn.active-role{border-color:var(--sun);background:linear-gradient(135deg,#FFFBEB,#FEF3C7);}
+.rbtn .re{font-size:2rem;display:block;margin-bottom:6px;}
+.rbtn .rn{font-weight:800;font-size:.95rem;}
+.rbtn .rs{font-size:.72rem;color:var(--muted);margin-top:2px;}
+.role-name-inputs{display:flex;gap:10px;margin-top:14px;}
+.rni-wrap{flex:1;display:flex;flex-direction:column;gap:4px;}
+.rni-wrap label{font-size:.74rem;font-weight:700;color:var(--muted);}
+.rni{border:2px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'Nunito',sans-serif;font-size:.88rem;outline:none;background:#fafafa;width:100%;}
+.rni:focus{border-color:var(--sun);}
+
+/* ── MAIN / TABS ── */
+main{padding:18px 14px;max-width:800px;margin:0 auto;}
+.tabs{
+  display:flex;gap:5px;margin-bottom:18px;
+  background:var(--card);border-radius:16px;padding:5px;box-shadow:var(--shadow);overflow-x:auto;
+}
+.tab{
+  flex:1;min-width:65px;padding:8px 4px;border:none;border-radius:11px;
+  font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;
+  cursor:pointer;transition:all .22s;background:transparent;color:var(--muted);white-space:nowrap;
+}
+.tab.active{color:#fff;transform:scale(1.02);}
+.tab[data-t="沛辰"].active{background:linear-gradient(135deg,var(--pc1),var(--pc2));}
+.tab[data-t="孟均"].active{background:linear-gradient(135deg,var(--mj1),var(--mj2));}
+.tab[data-t="rewards"].active{background:linear-gradient(135deg,#34D399,#10B981);}
+.tab[data-t="rules"].active{background:linear-gradient(135deg,#F59E0B,#FBBF24);}
+.panel{display:none;}
+.panel.active{display:block;animation:fup .3s ease;}
+@keyframes fup{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SCORE CARD ── */
+.score-card{
+  border-radius:26px;padding:24px 22px;
+  display:flex;align-items:center;gap:16px;
+  box-shadow:var(--shadowL);margin-bottom:16px;position:relative;overflow:hidden;
+}
+.score-card::before,.score-card::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.1);}
+.score-card::before{width:170px;height:170px;top:-50px;right:-50px;}
+.score-card::after{width:90px;height:90px;bottom:-25px;left:55px;}
+.sc-pc{background:linear-gradient(135deg,#FF6EB4,#FF9ED2);}
+.sc-mj{background:linear-gradient(135deg,#3B82F6,#60A5FA);}
+.cav{width:66px;height:66px;border-radius:50%;background:rgba(255,255,255,.28);border:3px solid rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:2.2rem;flex-shrink:0;position:relative;z-index:1;}
+.ci{flex:1;color:#fff;position:relative;z-index:1;}
+.cn{font-family:'Baloo 2',cursive;font-size:1.5rem;font-weight:800;}
+.cs{font-size:.8rem;opacity:.78;}
+.cstar-row{display:flex;gap:2px;margin-top:4px;flex-wrap:wrap;}
+.cstar{font-size:.95rem;}
+.cscore{text-align:right;position:relative;z-index:1;}
+.cbig{font-family:'Baloo 2',cursive;font-size:2.8rem;font-weight:900;color:#fff;line-height:1;text-shadow:0 4px 12px rgba(0,0,0,.2);}
+.cunit{font-size:.78rem;color:rgba(255,255,255,.78);}
+
+/* ── CARD / FORM ── */
+.card{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px;}
+.card-title{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.frow{display:flex;flex-direction:column;gap:10px;}
+.fgroup{display:flex;flex-direction:column;gap:4px;}
+.fgroup label{font-size:.76rem;font-weight:700;color:var(--muted);letter-spacing:.05em;}
+.fctl{border:2px solid var(--border);border-radius:12px;padding:9px 13px;font-family:'Nunito',sans-serif;font-size:.9rem;outline:none;transition:border .2s;background:#fafafa;color:var(--text);}
+.fctl:focus{border-color:var(--pc1);background:#fff;}
+.fctl.mj:focus{border-color:var(--mj1);}
+select.fctl{cursor:pointer;}
+.pts-row{display:flex;gap:7px;align-items:flex-end;}
+.pts-row .fgroup:first-child{flex:1;}
+.sbtn{width:40px;height:40px;border-radius:10px;border:2px solid var(--border);font-size:1.25rem;cursor:pointer;transition:all .2s;background:#fafafa;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;}
+.sbtn.sp{border-color:#34D399;color:#34D399;}
+.sbtn.sm{border-color:#F87171;color:#F87171;}
+.sbtn.sp.on{background:#34D399;color:#fff;}
+.sbtn.sm.on{background:#F87171;color:#fff;}
+.sub-btn{border:none;border-radius:13px;padding:11px;font-family:'Nunito',sans-serif;font-size:.92rem;font-weight:800;cursor:pointer;transition:all .22s;color:#fff;width:100%;}
+.sub-btn.pcb{background:linear-gradient(135deg,#FF6EB4,#FF9ED2);}
+.sub-btn.mjb{background:linear-gradient(135deg,#3B82F6,#60A5FA);}
+.sub-btn:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,.14);}
+
+/* ── HISTORY ── */
+.hist-list{display:flex;flex-direction:column;gap:6px;max-height:290px;overflow-y:auto;}
+.hi{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:11px;background:#fafafa;border:1.5px solid var(--border);animation:fup .2s ease;}
+.hi-ico{font-size:1.25rem;flex-shrink:0;}
+.hi-inf{flex:1;}
+.hi-rsn{font-weight:700;font-size:.85rem;}
+.hi-meta{font-size:.71rem;color:var(--muted);margin-top:1px;}
+.hi-who{font-size:.68rem;background:var(--border);border-radius:5px;padding:1px 5px;}
+.hi-pts{font-family:'Baloo 2',cursive;font-size:1.1rem;font-weight:800;flex-shrink:0;}
+.hi-pts.pos{color:#10B981;}
+.hi-pts.neg{color:#F87171;}
+.empty{text-align:center;color:var(--muted);font-size:.86rem;padding:16px 0;}
+
+/* ── REWARDS ── */
+.rw-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;background:var(--card);border-radius:16px;padding:13px 16px;box-shadow:var(--shadow);}
+.rw-si{display:flex;align-items:center;gap:7px;}
+.rw-dot{width:11px;height:11px;border-radius:50%;}
+.rw-dot-pc{background:linear-gradient(135deg,var(--pc1),var(--pc2));}
+.rw-dot-mj{background:linear-gradient(135deg,var(--mj1),var(--mj2));}
+.rw-num{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;}
+.rw-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.rw-hdr h2{font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:800;}
+.btn-add{background:linear-gradient(135deg,#FBBF24,#F59E0B);border:none;border-radius:12px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;color:#1a1a2e;transition:all .22s;}
+.btn-add:hover{transform:translateY(-2px);}
+.rw-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rw-item{background:var(--card);border-radius:18px;padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:all .22s;border:2px solid transparent;}
+.rw-item:hover{transform:translateY(-3px);box-shadow:var(--shadowL);border-color:var(--mj2);}
+.rw-del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-size:.85rem;opacity:.3;transition:.2s;}
+.rw-del:hover{opacity:1;}
+.rw-emoji{font-size:1.8rem;margin-bottom:6px;display:block;}
+.rw-name{font-weight:800;font-size:.88rem;margin-bottom:3px;}
+.rw-pts{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;color:var(--mj1);}
+.rdm-btn{display:block;width:100%;margin-top:8px;border:2px solid var(--mj1);background:none;border-radius:8px;padding:5px;font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:700;color:var(--mj1);cursor:pointer;transition:all .2s;}
+.rdm-btn:hover{background:var(--mj1);color:#fff;}
+
+/* ── RULES ── */
+.rl-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.rl-hdr h2{font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:800;}
+.btn-add-rl{background:linear-gradient(135deg,#F59E0B,#FBBF24);border:none;border-radius:12px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;cursor:pointer;color:#1a1a2e;transition:all .22s;}
+.btn-add-rl:hover{transform:translateY(-2px);}
+.rl-list{display:flex;flex-direction:column;gap:9px;}
+.rl-item{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:15px;padding:13px 14px;box-shadow:var(--shadow);border-left:5px solid var(--sun);transition:all .2s;}
+.rl-item:hover{box-shadow:var(--shadowL);}
+.rl-item.neg{border-left-color:#F87171;}
+.ri-ico{font-size:1.7rem;flex-shrink:0;}
+.ri-info{flex:1;}
+.ri-name{font-weight:800;font-size:.92rem;}
+.ri-desc{font-size:.73rem;color:var(--muted);margin-top:1px;}
+.ri-badge{font-family:'Baloo 2',cursive;font-size:1.05rem;font-weight:800;padding:3px 11px;border-radius:18px;flex-shrink:0;}
+.ri-badge.pos{background:#D1FAE5;color:#065F46;}
+.ri-badge.neg{background:#FEE2E2;color:#991B1B;}
+.ri-acts{display:flex;gap:5px;flex-shrink:0;}
+.ri-ab{background:none;border:1.5px solid var(--border);border-radius:7px;width:28px;height:28px;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ri-ab:hover{background:var(--border);}
+.rules-note{margin-top:14px;background:linear-gradient(135deg,#FFF7ED,#FFFBEB);border:1.5px solid #FDE68A;border-radius:14px;padding:12px 14px;}
+.rules-note p{font-size:.8rem;color:#92400E;font-weight:600;line-height:1.7;}
+
+/* ── FIREBASE PANEL ── */
+.fb-panel{background:var(--card);border-radius:20px;padding:20px;box-shadow:var(--shadow);margin-top:14px;}
+.fb-panel h3{font-family:'Baloo 2',cursive;font-size:1rem;font-weight:800;margin-bottom:4px;display:flex;align-items:center;gap:7px;}
+.fb-panel .sub{font-size:.78rem;color:var(--muted);margin-bottom:14px;}
+.fb-info-row{display:flex;align-items:center;gap:8px;background:#f8f9ff;border-radius:12px;padding:10px 14px;margin-bottom:12px;border:1.5px solid var(--border);}
+.fb-info-dot{width:10px;height:10px;border-radius:50%;background:#D1D5DB;flex-shrink:0;}
+.fb-info-dot.on{background:#34D399;box-shadow:0 0 6px rgba(52,211,153,.5);}
+.fb-info-dot.err{background:#F87171;}
+.fb-info-txt{font-size:.8rem;color:var(--muted);flex:1;}
+.fb-info-txt strong{color:var(--text);}
+.fb-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.fbtn{flex:1;min-width:100px;padding:9px 10px;border:2px solid var(--border);border-radius:11px;background:none;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.fbtn:hover{background:#f0f6ff;border-color:var(--mj2);}
+.fbtn.primary{background:linear-gradient(135deg,#FF6B35,#F7931E);color:#fff;border:none;}
+.fbtn.primary:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(255,107,53,.28);}
+.fbtn.danger{border-color:#FECACA;color:#DC2626;}
+.fbtn.danger:hover{background:#FEF2F2;}
+.fb-last{font-size:.73rem;color:var(--muted);margin-top:8px;text-align:center;}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:14px;}
+.overlay.show{display:flex;animation:fadeIn .2s;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border-radius:24px;padding:26px;max-width:370px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.22);animation:popin .26s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popin{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.modal h3{font-family:'Baloo 2',cursive;font-size:1.15rem;margin-bottom:16px;}
+.m-acts{display:flex;gap:7px;margin-top:16px;}
+.btn-c{flex:1;padding:10px;border:2px solid var(--border);background:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-c:hover{background:var(--border);}
+.btn-ok{flex:1;padding:10px;border:none;background:linear-gradient(135deg,#3B82F6,#60A5FA);border-radius:12px;color:#fff;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:all .2s;}
+.btn-ok:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(59,130,246,.28);}
+
+/* ── TOAST / CONFETTI ── */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(68px);background:#1E1B2E;color:#fff;padding:9px 20px;border-radius:50px;font-weight:700;font-size:.86rem;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:9000;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.cf{position:fixed;pointer-events:none;z-index:9998;opacity:1;animation:cff 2s ease-in forwards;}
+@keyframes cff{to{transform:translateY(110vh) rotate(720deg);opacity:0;}}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+@media(max-width:480px){.rw-grid{grid-template-columns:1fr;}.role-btns{gap:8px;}}
+</style>
+</head>
+<body>
+
+<!-- ══ FIREBASE SETUP ══ -->
+<div id="setupScreen">
+  <div class="setup-title"><em>🌟</em>寶貝集點站</div>
+  <div class="setup-box">
+    <h2>🔥 連接 Firebase</h2>
+    <p>輸入你的 Firebase 設定，讓資料即時同步到雲端。<br>只需設定一次，之後自動連線。</p>
+    <input class="setup-inp" id="fbApiKey"     placeholder="apiKey" autocomplete="off">
+    <input class="setup-inp" id="fbProjectId"  placeholder="projectId" autocomplete="off">
+    <input class="setup-inp" id="fbAppId"      placeholder="appId" autocomplete="off">
+    <p id="setupErr" class="setup-err"></p>
+    <button class="setup-btn" onclick="connectFirebase()">🔥 連接並開始使用</button>
+    <div class="setup-divider"><span>或</span></div>
+    <span class="setup-skip" onclick="skipFirebase()">先跳過，僅使用本機儲存</span>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="hl">
+    <div class="hlogo">🌟 寶貝集點站</div>
+    <div class="huser" id="huser" onclick="openRoleSheet()">👨 爸爸 ▾</div>
+  </div>
+  <div class="hr">
+    <div class="fb-badge" id="fbBadge">
+      <div class="fb-badge-dot" id="fbBadgeDot"></div>
+      <span id="fbBadgeTxt">離線</span>
+    </div>
+    <button class="hico" onclick="sw('backup')" title="備份">💾</button>
+  </div>
+</header>
+
+<main>
+  <div class="tabs">
+    <button class="tab active" data-t="沛辰"   onclick="sw('沛辰')">🌸 沛辰</button>
+    <button class="tab"        data-t="孟均"   onclick="sw('孟均')">🚀 孟均</button>
+    <button class="tab"        data-t="rewards" onclick="sw('rewards')">🎁 獎勵</button>
+    <button class="tab"        data-t="rules"   onclick="sw('rules')">📋 規則</button>
+    <button class="tab"        data-t="backup"  onclick="sw('backup')">💾 備份</button>
+  </div>
+
+  <!-- 沛辰 -->
+  <div class="panel active" id="panel-沛辰">
+    <div class="score-card sc-pc">
+      <div class="cav">🌸</div>
+      <div class="ci">
+        <div class="cn">沛辰</div>
+        <div class="cs">累積點數</div>
+        <div class="cstar-row" id="stars-沛辰"></div>
+      </div>
+      <div class="cscore">
+        <div class="cbig" id="score-沛辰">0</div>
+        <div class="cunit">點</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">✏️ 加減點數 <span style="font-size:.72rem;font-weight:600;color:var(--muted);" id="giver-沛辰"></span></div>
+      <div class="frow">
+        <div class="fgroup"><label>行為項目</label>
+          <select class="fctl" id="reason-沛辰" onchange="onRsn('沛辰')"><option value="">─ 選擇項目 ─</option></select>
+        </div>
+        <div class="fgroup" id="cg-沛辰" style="display:none"><label>自訂事由</label>
+          <input class="fctl" type="text" id="cr-沛辰" placeholder="輸入事由">
+        </div>
+        <div class="fgroup"><label>點數與加減</label>
+          <div class="pts-row">
+            <div class="fgroup"><input class="fctl" type="number" id="pts-沛辰" min="1" max="999" value="1"></div>
+            <button class="sbtn sp on" id="p-沛辰"  onclick="setSgn('沛辰','plus')">＋</button>
+            <button class="sbtn sm"    id="m-沛辰"  onclick="setSgn('沛辰','minus')">－</button>
+          </div>
+        </div>
+        <div class="fgroup"><label>備注（選填）</label>
+          <input class="fctl" type="text" id="note-沛辰" placeholder="例：今天主動刷牙，很棒！">
+        </div>
+        <button class="sub-btn pcb" onclick="addPts('沛辰')">⭐ 記錄點數</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 記錄
+        <button style="font-size:.7rem;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;padding:3px 7px;border-radius:7px;" onclick="clrHist('沛辰')">清除全部</button>
+      </div>
+      <div class="hist-list" id="history-沛辰"><p class="empty">還沒有記錄喔！</p></div>
+    </div>
+  </div>
+
+  <!-- 孟均 -->
+  <div class="panel" id="panel-孟均">
+    <div class="score-card sc-mj">
+      <div class="cav">🚀</div>
+      <div class="ci">
+        <div class="cn">孟均</div>
+        <div class="cs">累積點數</div>
+        <div class="cstar-row" id="stars-孟均"></div>
+      </div>
+      <div class="cscore">
+        <div class="cbig" id="score-孟均">0</div>
+        <div class="cunit">點</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">✏️ 加減點數 <span style="font-size:.72rem;font-weight:600;color:var(--muted);" id="giver-孟均"></span></div>
+      <div class="frow">
+        <div class="fgroup"><label>行為項目</label>
+          <select class="fctl mj" id="reason-孟均" onchange="onRsn('孟均')"><option value="">─ 選擇項目 ─</option></select>
+        </div>
+        <div class="fgroup" id="cg-孟均" style="display:none"><label>自訂事由</label>
+          <input class="fctl mj" type="text" id="cr-孟均" placeholder="輸入事由">
+        </div>
+        <div class="fgroup"><label>點數與加減</label>
+          <div class="pts-row">
+            <div class="fgroup"><input class="fctl mj" type="number" id="pts-孟均" min="1" max="999" value="1"></div>
+            <button class="sbtn sp on" id="p-孟均"  onclick="setSgn('孟均','plus')">＋</button>
+            <button class="sbtn sm"    id="m-孟均"  onclick="setSgn('孟均','minus')">－</button>
+          </div>
+        </div>
+        <div class="fgroup"><label>備注（選填）</label>
+          <input class="fctl mj" type="text" id="note-孟均" placeholder="例：考試前很認真複習！">
+        </div>
+        <button class="sub-btn mjb" onclick="addPts('孟均')">⭐ 記錄點數</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📋 記錄
+        <button style="font-size:.7rem;font-weight:700;color:var(--muted);background:none;border:none;cursor:pointer;padding:3px 7px;border-radius:7px;" onclick="clrHist('孟均')">清除全部</button>
+      </div>
+      <div class="hist-list" id="history-孟均"><p class="empty">還沒有記錄喔！</p></div>
+    </div>
+  </div>
+
+  <!-- 獎勵 -->
+  <div class="panel" id="panel-rewards">
+    <div class="rw-bar">
+      <div class="rw-si"><div class="rw-dot rw-dot-pc"></div><span style="font-weight:700;font-size:.86rem;">沛辰</span><span class="rw-num" id="rsc-沛辰">0</span><span style="font-size:.76rem;color:var(--muted);">點</span></div>
+      <div class="rw-si"><div class="rw-dot rw-dot-mj"></div><span style="font-weight:700;font-size:.86rem;">孟均</span><span class="rw-num" id="rsc-孟均">0</span><span style="font-size:.76rem;color:var(--muted);">點</span></div>
+    </div>
+    <div class="rw-hdr"><h2>🎁 獎勵兌換</h2><button class="btn-add" onclick="openRwModal()">＋ 新增獎勵</button></div>
+    <div class="rw-grid" id="rwGrid"></div>
+  </div>
+
+  <!-- 規則 -->
+  <div class="panel" id="panel-rules">
+    <div class="rl-hdr"><h2>📋 集點規則</h2><button class="btn-add-rl" onclick="openRlModal()">＋ 新增規則</button></div>
+    <div class="rl-list" id="rlList"></div>
+    <div class="rules-note">
+      <p>💡 此處設定的規則會自動出現在下拉選單，選擇後點數自動帶入。</p>
+    </div>
+  </div>
+
+  <!-- 備份 -->
+  <div class="panel" id="panel-backup">
+    <div class="card">
+      <div class="card-title">🔥 Firebase 雲端同步</div>
+      <div class="fb-info-row">
+        <div class="fb-info-dot" id="fbInfoDot"></div>
+        <div class="fb-info-txt" id="fbInfoTxt">未連接 Firebase</div>
+      </div>
+      <div class="fb-btns">
+        <button class="fbtn primary" onclick="openSetup()">⚙️ 設定 Firebase</button>
+        <button class="fbtn" onclick="manualSync()">🔄 立即同步</button>
+        <button class="fbtn" onclick="pullFromFb()">⬇️ 從雲端還原</button>
+      </div>
+      <p class="fb-last" id="fbLastSync">尚未同步</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📁 本機備份（備用）</div>
+      <p style="font-size:.8rem;color:var(--muted);margin-bottom:12px;line-height:1.65;">
+        下載 .json 備份檔存到 Google 雲端硬碟或手機，換裝置時匯入還原。
+      </p>
+      <div class="fb-btns">
+        <button class="fbtn primary" style="background:linear-gradient(135deg,#34D399,#10B981);" onclick="exportData()">⬇️ 匯出備份</button>
+        <button class="fbtn" onclick="document.getElementById('importFile').click()">⬆️ 匯入還原</button>
+        <button class="fbtn" onclick="copyDataTxt()">📋 複製文字</button>
+      </div>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="color:#DC2626;">⚠️ 危險區域</div>
+      <div class="fb-btns">
+        <button class="fbtn danger" onclick="resetAllData()">🗑 清除所有資料</button>
+        <button class="fbtn danger" onclick="clearFbConfig()">🔌 移除 Firebase 設定</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ══ ROLE SHEET ══ -->
+<div class="role-switcher-overlay" id="roleOverlay" onclick="closeRoleSheet(event)">
+  <div class="role-sheet">
+    <h3>切換身份</h3>
+    <div class="role-btns">
+      <button class="rbtn" id="rbtn-dad" onclick="selectRole('dad')">
+        <span class="re">👨</span>
+        <div class="rn" id="rbn-dad">爸爸</div>
+        <div class="rs">管理員</div>
+      </button>
+      <button class="rbtn" id="rbtn-mom" onclick="selectRole('mom')">
+        <span class="re">👩</span>
+        <div class="rn" id="rbn-mom">媽媽</div>
+        <div class="rs">管理員</div>
+      </button>
+    </div>
+    <div class="role-name-inputs">
+      <div class="rni-wrap">
+        <label>爸爸稱呼</label>
+        <input class="rni" id="dadEdit" value="爸爸" oninput="updRole('dad')">
+      </div>
+      <div class="rni-wrap">
+        <label>媽媽稱呼</label>
+        <input class="rni" id="momEdit" value="媽媽" oninput="updRole('mom')">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="overlay" id="rwModal">
+  <div class="modal"><h3>🎁 新增獎勵</h3>
+    <div class="frow">
+      <div class="fgroup"><label>獎勵名稱</label><input class="fctl" id="rwN" type="text" placeholder="例：看一部電影"></div>
+      <div class="fgroup"><label>表情符號</label><input class="fctl" id="rwE" type="text" placeholder="🎬" maxlength="4" style="font-size:1.2rem;text-align:center;"></div>
+      <div class="fgroup"><label>所需點數</label><input class="fctl" id="rwP" type="number" min="1" value="10"></div>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('rwModal')">取消</button>
+      <button class="btn-ok" onclick="addRw()">新增</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="rlModal">
+  <div class="modal"><h3>📋 新增集點規則</h3>
+    <div class="frow">
+      <div class="fgroup"><label>行為名稱</label><input class="fctl" id="rlN" type="text" placeholder="例：完成回家作業"></div>
+      <div class="fgroup"><label>表情符號</label><input class="fctl" id="rlE" type="text" placeholder="📚" maxlength="4" style="font-size:1.2rem;text-align:center;"></div>
+      <div class="fgroup"><label>說明（選填）</label><input class="fctl" id="rlD" type="text" placeholder="例：每天完成當天作業"></div>
+      <div class="fgroup"><label>點數</label>
+        <div class="pts-row">
+          <div class="fgroup"><input class="fctl" id="rlP" type="number" min="1" value="1"></div>
+          <button class="sbtn sp on" id="rlPs" onclick="setRlSgn('plus')">＋</button>
+          <button class="sbtn sm"    id="rlMs" onclick="setRlSgn('minus')">－</button>
+        </div>
+      </div>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('rlModal')">取消</button>
+      <button class="btn-ok" onclick="addRl()">新增</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="editRlModal">
+  <div class="modal"><h3>✏️ 編輯規則</h3>
+    <input type="hidden" id="editRlId">
+    <div class="frow">
+      <div class="fgroup"><label>行為名稱</label><input class="fctl" id="editRlN" type="text"></div>
+      <div class="fgroup"><label>表情符號</label><input class="fctl" id="editRlE" type="text" maxlength="4" style="font-size:1.2rem;text-align:center;"></div>
+      <div class="fgroup"><label>說明</label><input class="fctl" id="editRlD" type="text"></div>
+      <div class="fgroup"><label>點數</label>
+        <div class="pts-row">
+          <div class="fgroup"><input class="fctl" id="editRlP" type="number" min="1" value="1"></div>
+          <button class="sbtn sp on" id="editRlPs" onclick="setEditRlSgn('plus')">＋</button>
+          <button class="sbtn sm"    id="editRlMs" onclick="setEditRlSgn('minus')">－</button>
+        </div>
+      </div>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('editRlModal')">取消</button>
+      <button class="btn-ok" onclick="saveEditRl()">儲存</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="rdmModal">
+  <div class="modal">
+    <h3 id="rdmTitle">🎁 兌換獎勵</h3>
+    <p id="rdmMsg" style="color:var(--muted);font-size:.85rem;margin-bottom:12px;"></p>
+    <div class="fgroup"><label>選擇兒童</label>
+      <select class="fctl" id="rdmChild">
+        <option value="沛辰">🌸 沛辰</option>
+        <option value="孟均">🚀 孟均</option>
+      </select>
+    </div>
+    <div class="m-acts">
+      <button class="btn-c" onclick="closeM('rdmModal')">取消</button>
+      <button class="btn-ok" onclick="confirmRdm()">確認兌換</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+/* ═══════════════════════════════
+   DATA
+═══════════════════════════════ */
+let D = {
+  scores:{沛辰:0,孟均:0},
+  history:{沛辰:[],孟均:[]},
+  rewards:[
+    {id:1,emoji:'🍦',name:'吃一個冰淇淋',pts:5},
+    {id:2,emoji:'🎮',name:'玩30分鐘遊戲',pts:10},
+    {id:3,emoji:'🎬',name:'選一部電影',pts:15},
+    {id:4,emoji:'🛍️',name:'買一個小玩具',pts:30},
+  ],
+  rules:[
+    {id:1,emoji:'🦷',name:'晚上刷牙',desc:'每天晚上刷牙',pts:1,sign:'plus'},
+    {id:2,emoji:'💯',name:'考試滿分',desc:'任何科目滿分',pts:5,sign:'plus'},
+    {id:3,emoji:'📝',name:'考試90分',desc:'任何科目90分以上',pts:3,sign:'plus'},
+    {id:4,emoji:'📚',name:'完成回家作業',desc:'當天作業全部完成',pts:2,sign:'plus'},
+    {id:5,emoji:'😤',name:'頂嘴',desc:'對長輩不禮貌',pts:1,sign:'minus'},
+  ],
+  rwCnt:5, rlCnt:6,
+  roles:{dad:'爸爸',mom:'媽媽'},
+};
+let role = 'dad';
+let sgn = {沛辰:'plus',孟均:'plus'};
+let rlSgn='plus', editRlSgn='plus';
+let rdmTarget = null;
+
+// Firebase state
+let fbApp=null, fbDb=null, fbUnsub=null;
+let fbConnected = false;
+let lastSync = null;
+const FB_DOC = 'kidspoints/main';
+
+/* ═══════════════════════════════
+   LOCAL STORAGE
+═══════════════════════════════ */
+function save(){try{localStorage.setItem('kpv4',JSON.stringify(D));}catch(e){}}
+function load(){
+  try{
+    const d=JSON.parse(localStorage.getItem('kpv4'));
+    if(d){D=Object.assign({},D,d);D.rules=(D.rules||[]).map(r=>({sign:'plus',...r}));}
+  }catch(e){}
+}
+function loadFbConfig(){
+  try{return JSON.parse(localStorage.getItem('fbConfig'))||null;}catch(e){return null;}
+}
+function saveFbConfig(cfg){localStorage.setItem('fbConfig',JSON.stringify(cfg));}
+
+/* ═══════════════════════════════
+   FIREBASE
+═══════════════════════════════ */
+window.connectFirebase = async function(){
+  const apiKey    = document.getElementById('fbApiKey').value.trim();
+  const projectId = document.getElementById('fbProjectId').value.trim();
+  const appId     = document.getElementById('fbAppId').value.trim();
+  const errEl     = document.getElementById('setupErr');
+  errEl.style.display='none';
+  if(!apiKey||!projectId||!appId){
+    errEl.textContent='請填入所有欄位';errEl.style.display='block';return;
+  }
+  try{
+    const cfg={apiKey,authDomain:`${projectId}.firebaseapp.com`,projectId,storageBucket:`${projectId}.appspot.com`,appId};
+    await initFb(cfg);
+    saveFbConfig(cfg);
+    document.getElementById('setupScreen').classList.add('hide');
+    toast('🔥 Firebase 連接成功！');
+  }catch(e){
+    errEl.textContent='連接失敗：'+e.message;errEl.style.display='block';
+  }
+};
+
+async function initFb(cfg){
+  if(fbUnsub){fbUnsub();fbUnsub=null;}
+  fbApp = initializeApp(cfg, 'kidsApp'+(Date.now()));
+  fbDb  = getFirestore(fbApp);
+  // Try a read to confirm connection
+  const ref = doc(fbDb, FB_DOC);
+  await getDoc(ref); // throws if config wrong
+  fbConnected = true;
+  updateFbUI(true);
+  // Real-time listener
+  fbUnsub = onSnapshot(ref, snap=>{
+    if(snap.exists()){
+      const remote = snap.data();
+      // Only overwrite if remote is newer
+      if(!remote._ts || !lastSync || remote._ts > (D._ts||0)){
+        D = Object.assign({},D,remote);
+        D.rules=(D.rules||[]).map(r=>({sign:'plus',...r}));
+        save(); renderAll(); lastSync=new Date();
+        updFbLastSync();
+      }
+    }
+  }, err=>{
+    fbConnected=false; updateFbUI(false);
+  });
+  // Initial pull
+  const snap = await getDoc(ref);
+  if(snap.exists()){
+    const remote=snap.data();
+    D=Object.assign({},D,remote);
+    D.rules=(D.rules||[]).map(r=>({sign:'plus',...r}));
+    save(); renderAll();
+  } else {
+    // First time: push local data
+    await pushToFb();
+  }
+  lastSync=new Date(); updFbLastSync();
+}
+
+async function pushToFb(){
+  if(!fbDb)return;
+  try{
+    D._ts = Date.now();
+    const ref=doc(fbDb,FB_DOC);
+    await setDoc(ref, JSON.parse(JSON.stringify(D)));
+    lastSync=new Date(); updFbLastSync();
+  }catch(e){console.warn('FB push fail',e);}
+}
+
+window.manualSync = async function(){
+  if(!fbDb){toast('請先設定 Firebase');return;}
+  toast('🔄 同步中…');
+  await pushToFb();
+  toast('✅ 同步完成！');
+};
+
+window.pullFromFb = async function(){
+  if(!fbDb){toast('請先設定 Firebase');return;}
+  if(!confirm('從雲端覆蓋本機資料？'))return;
+  try{
+    const snap=await getDoc(doc(fbDb,FB_DOC));
+    if(!snap.exists()){toast('雲端目前沒有資料');return;}
+    D=Object.assign({},D,snap.data());
+    D.rules=(D.rules||[]).map(r=>({sign:'plus',...r}));
+    save(); renderAll();
+    toast('⬇️ 雲端資料還原成功！');
+  }catch(e){toast('還原失敗：'+e.message);}
+};
+
+window.openSetup = function(){
+  const cfg=loadFbConfig()||{};
+  document.getElementById('fbApiKey').value=cfg.apiKey||'';
+  document.getElementById('fbProjectId').value=cfg.projectId||'';
+  document.getElementById('fbAppId').value=cfg.appId||'';
+  document.getElementById('setupErr').style.display='none';
+  document.getElementById('setupScreen').classList.remove('hide');
+};
+window.skipFirebase = function(){
+  document.getElementById('setupScreen').classList.add('hide');
+  toast('💾 使用本機儲存模式');
+};
+window.clearFbConfig = function(){
+  if(!confirm('確定移除 Firebase 設定？'))return;
+  localStorage.removeItem('fbConfig');
+  if(fbUnsub){fbUnsub();fbUnsub=null;}
+  fbConnected=false; fbDb=null;
+  updateFbUI(false);
+  toast('🔌 Firebase 設定已移除');
+};
+
+function updateFbUI(ok){
+  const dot1=document.getElementById('fbBadgeDot');
+  const txt1=document.getElementById('fbBadgeTxt');
+  const dot2=document.getElementById('fbInfoDot');
+  const txt2=document.getElementById('fbInfoTxt');
+  if(ok){
+    dot1.className='fb-badge-dot on'; txt1.textContent='已連線';
+    dot2.className='fb-info-dot on';
+    txt2.innerHTML='<strong>Firebase 已連線</strong>，資料即時同步中';
+  }else{
+    dot1.className='fb-badge-dot'; txt1.textContent='離線';
+    dot2.className='fb-info-dot err';
+    txt2.innerHTML='<strong>未連線</strong>，點「設定 Firebase」重新連接';
+  }
+}
+function updFbLastSync(){
+  const el=document.getElementById('fbLastSync');
+  if(el&&lastSync)el.textContent=`上次同步：${lastSync.toLocaleString('zh-TW')}`;
+}
+
+/* ═══════════════════════════════
+   SAVE WRAPPER (local + firebase)
+═══════════════════════════════ */
+function saveAll(){
+  save();
+  if(fbConnected) pushToFb();
+}
+
+/* ═══════════════════════════════
+   ROLE
+═══════════════════════════════ */
+function getRN(){return D.roles[role]||(role==='dad'?'爸爸':'媽媽');}
+window.openRoleSheet=function(){document.getElementById('roleOverlay').classList.add('show');};
+window.closeRoleSheet=function(e){if(e.target===document.getElementById('roleOverlay'))document.getElementById('roleOverlay').classList.remove('show');};
+window.selectRole=function(r){
+  role=r;
+  document.getElementById('rbtn-dad').classList.toggle('active-role',r==='dad');
+  document.getElementById('rbtn-mom').classList.toggle('active-role',r==='mom');
+  const em=r==='dad'?'👨':'👩';
+  document.getElementById('huser').textContent=em+' '+getRN()+' ▾';
+  ['沛辰','孟均'].forEach(c=>{document.getElementById('giver-'+c).textContent='由 '+getRN()+' 給分';});
+  document.getElementById('roleOverlay').classList.remove('show');
+};
+window.updRole=function(r){
+  const v=document.getElementById(r==='dad'?'dadEdit':'momEdit').value||(r==='dad'?'爸爸':'媽媽');
+  D.roles[r]=v;
+  document.getElementById('rbn-'+r).textContent=v;
+  if(role===r){
+    const em=r==='dad'?'👨':'👩';
+    document.getElementById('huser').textContent=em+' '+v+' ▾';
+    ['沛辰','孟均'].forEach(c=>{document.getElementById('giver-'+c).textContent='由 '+v+' 給分';});
+  }
+  saveAll();
+};
+
+/* ═══════════════════════════════
+   TABS
+═══════════════════════════════ */
+window.sw=function(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  const tb=document.querySelector(`.tab[data-t="${t}"]`);
+  if(tb)tb.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+t).classList.add('active');
+  if(t==='rewards')updRwScores();
+};
+
+/* ═══════════════════════════════
+   DROPDOWNS
+═══════════════════════════════ */
+function buildDd(child){
+  const s=document.getElementById('reason-'+child);
+  const cur=s.value;
+  s.innerHTML='<option value="">─ 選擇項目 ─</option>';
+  D.rules.forEach(r=>{
+    const o=document.createElement('option');
+    o.value=r.name;
+    o.textContent=`${r.emoji} ${r.name}（${r.sign==='plus'?'+':'−'}${r.pts}點）`;
+    o.dataset.pts=r.pts;o.dataset.sign=r.sign;
+    s.appendChild(o);
+  });
+  const c=document.createElement('option');c.value='custom';c.textContent='✏️ 自訂…';
+  s.appendChild(c);s.value=cur;
+}
+window.onRsn=function(child){
+  const s=document.getElementById('reason-'+child);
+  const o=s.options[s.selectedIndex];
+  document.getElementById('cg-'+child).style.display=s.value==='custom'?'flex':'none';
+  if(s.value&&s.value!=='custom'&&o.dataset.pts){
+    document.getElementById('pts-'+child).value=o.dataset.pts;
+    setSgn(child,o.dataset.sign||'plus');
+  }
+};
+
+/* ═══════════════════════════════
+   POINTS
+═══════════════════════════════ */
+window.setSgn=function(child,s){
+  sgn[child]=s;
+  document.getElementById('p-'+child).classList.toggle('on',s==='plus');
+  document.getElementById('m-'+child).classList.toggle('on',s==='minus');
+};
+window.addPts=function(child){
+  const sel=document.getElementById('reason-'+child).value;
+  let rsn=sel;
+  if(sel==='custom'){rsn=document.getElementById('cr-'+child).value.trim();if(!rsn){toast('請輸入自訂事由');return;}}
+  if(!sel){toast('請選擇行為項目');return;}
+  const pts=parseInt(document.getElementById('pts-'+child).value)||0;
+  if(pts<=0){toast('點數需大於 0');return;}
+  const note=document.getElementById('note-'+child).value.trim();
+  const delta=sgn[child]==='plus'?pts:-pts;
+  D.scores[child]=Math.max(0,D.scores[child]+delta);
+  D.history[child].unshift({rsn,pts:delta,note,giver:getRN(),time:new Date().toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  saveAll(); renderScore(child); renderHist(child);
+  document.getElementById('reason-'+child).value='';
+  document.getElementById('pts-'+child).value='1';
+  document.getElementById('note-'+child).value='';
+  document.getElementById('cr-'+child).value='';
+  document.getElementById('cg-'+child).style.display='none';
+  setSgn(child,'plus');
+  if(delta>0){confetti();toast(`🌟 ${child} ＋${pts} 點！`);}
+  else toast(`📉 ${child} −${pts} 點`);
+};
+
+/* ═══════════════════════════════
+   RENDER
+═══════════════════════════════ */
+function renderScore(child){
+  document.getElementById('score-'+child).textContent=D.scores[child];
+  const n=Math.min(10,Math.floor(D.scores[child]/5));
+  document.getElementById('stars-'+child).innerHTML=Array.from({length:n},()=>'<span class="cstar">⭐</span>').join('');
+}
+function renderHist(child){
+  const el=document.getElementById('history-'+child);
+  const h=D.history[child];
+  if(!h.length){el.innerHTML='<p class="empty">還沒有記錄喔！</p>';return;}
+  el.innerHTML=h.slice(0,60).map(x=>`
+    <div class="hi">
+      <span class="hi-ico">${x.pts>0?'⬆️':'⬇️'}</span>
+      <div class="hi-inf">
+        <div class="hi-rsn">${x.rsn}</div>
+        <div class="hi-meta">${x.time}${x.giver?` <span class="hi-who">${x.giver}</span>`:''}${x.note?' · '+x.note:''}</div>
+      </div>
+      <div class="hi-pts ${x.pts>0?'pos':'neg'}">${x.pts>0?'+':''}${x.pts}</div>
+    </div>`).join('');
+}
+window.clrHist=function(child){
+  if(!confirm(`確定清除 ${child} 的所有記錄？`))return;
+  D.history[child]=[];saveAll();renderHist(child);toast('記錄已清除');
+};
+function renderAll(){
+  ['沛辰','孟均'].forEach(c=>{buildDd(c);renderScore(c);renderHist(c);});
+  renderRw();renderRl();updRwScores();
+  document.getElementById('dadEdit').value=D.roles?.dad||'爸爸';
+  document.getElementById('momEdit').value=D.roles?.mom||'媽媽';
+  document.getElementById('rbn-dad').textContent=D.roles?.dad||'爸爸';
+  document.getElementById('rbn-mom').textContent=D.roles?.mom||'媽媽';
+}
+
+/* ═══════════════════════════════
+   REWARDS
+═══════════════════════════════ */
+function renderRw(){
+  const g=document.getElementById('rwGrid');
+  if(!D.rewards.length){g.innerHTML='<p class="empty" style="grid-column:1/-1">還沒有獎勵項目</p>';return;}
+  g.innerHTML=D.rewards.map(r=>`
+    <div class="rw-item">
+      <button class="rw-del" onclick="delRw(${r.id})">✕</button>
+      <span class="rw-emoji">${r.emoji}</span>
+      <div class="rw-name">${r.name}</div>
+      <div class="rw-pts">⭐ ${r.pts} 點</div>
+      <button class="rdm-btn" onclick="openRdm(${r.id})">兌換</button>
+    </div>`).join('');
+}
+function updRwScores(){
+  document.getElementById('rsc-沛辰').textContent=D.scores['沛辰'];
+  document.getElementById('rsc-孟均').textContent=D.scores['孟均'];
+}
+window.openRwModal=function(){document.getElementById('rwModal').classList.add('show');};
+window.addRw=function(){
+  const n=document.getElementById('rwN').value.trim();
+  const e=document.getElementById('rwE').value.trim()||'🎁';
+  const p=parseInt(document.getElementById('rwP').value)||10;
+  if(!n){toast('請輸入獎勵名稱');return;}
+  D.rewards.push({id:D.rwCnt++,emoji:e,name:n,pts:p});
+  saveAll();renderRw();
+  document.getElementById('rwN').value='';document.getElementById('rwE').value='';document.getElementById('rwP').value='10';
+  closeM('rwModal');toast('🎁 獎勵已新增！');
+};
+window.delRw=function(id){D.rewards=D.rewards.filter(r=>r.id!==id);saveAll();renderRw();toast('獎勵已刪除');};
+window.openRdm=function(id){
+  rdmTarget=id;
+  const r=D.rewards.find(x=>x.id===id);
+  document.getElementById('rdmTitle').textContent=`🎁 兌換「${r.name}」`;
+  document.getElementById('rdmMsg').textContent=`需要 ${r.pts} 點。請選擇要兌換的孩子：`;
+  document.getElementById('rdmModal').classList.add('show');
+};
+window.confirmRdm=function(){
+  const child=document.getElementById('rdmChild').value;
+  const r=D.rewards.find(x=>x.id===rdmTarget);
+  if(!r)return;
+  if(D.scores[child]<r.pts){toast(`${child} 點數不足（需 ${r.pts} 點）`);return;}
+  D.scores[child]-=r.pts;
+  D.history[child].unshift({rsn:`兌換：${r.name}`,pts:-r.pts,note:'',giver:getRN(),time:new Date().toLocaleString('zh-TW',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})});
+  saveAll();renderScore(child);renderHist(child);updRwScores();
+  closeM('rdmModal');confetti();toast(`🎉 ${child} 成功兌換「${r.name}」！`);
+};
+
+/* ═══════════════════════════════
+   RULES
+═══════════════════════════════ */
+function renderRl(){
+  const el=document.getElementById('rlList');
+  if(!D.rules.length){el.innerHTML='<p class="empty">還沒有規則</p>';return;}
+  el.innerHTML=D.rules.map(r=>`
+    <div class="rl-item ${r.sign==='minus'?'neg':''}">
+      <span class="ri-ico">${r.emoji}</span>
+      <div class="ri-info">
+        <div class="ri-name">${r.name}</div>
+        ${r.desc?`<div class="ri-desc">${r.desc}</div>`:''}
+      </div>
+      <div class="ri-badge ${r.sign==='plus'?'pos':'neg'}">${r.sign==='plus'?'+':'-'}${r.pts} 點</div>
+      <div class="ri-acts">
+        <button class="ri-ab" onclick="openEditRl(${r.id})">✏️</button>
+        <button class="ri-ab" onclick="delRl(${r.id})">🗑</button>
+      </div>
+    </div>`).join('');
+  ['沛辰','孟均'].forEach(c=>buildDd(c));
+}
+window.setRlSgn=function(s){rlSgn=s;document.getElementById('rlPs').classList.toggle('on',s==='plus');document.getElementById('rlMs').classList.toggle('on',s==='minus');};
+window.setEditRlSgn=function(s){editRlSgn=s;document.getElementById('editRlPs').classList.toggle('on',s==='plus');document.getElementById('editRlMs').classList.toggle('on',s==='minus');};
+window.openRlModal=function(){
+  rlSgn='plus';window.setRlSgn('plus');
+  ['rlN','rlE','rlD'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('rlP').value='1';
+  document.getElementById('rlModal').classList.add('show');
+};
+window.addRl=function(){
+  const n=document.getElementById('rlN').value.trim();
+  const e=document.getElementById('rlE').value.trim()||'⭐';
+  const d=document.getElementById('rlD').value.trim();
+  const p=parseInt(document.getElementById('rlP').value)||1;
+  if(!n){toast('請輸入行為名稱');return;}
+  D.rules.push({id:D.rlCnt++,emoji:e,name:n,desc:d,pts:p,sign:rlSgn});
+  saveAll();renderRl();closeM('rlModal');toast('📋 規則已新增！');
+};
+window.openEditRl=function(id){
+  const r=D.rules.find(x=>x.id===id);
+  document.getElementById('editRlId').value=id;
+  document.getElementById('editRlN').value=r.name;
+  document.getElementById('editRlE').value=r.emoji;
+  document.getElementById('editRlD').value=r.desc||'';
+  document.getElementById('editRlP').value=r.pts;
+  editRlSgn=r.sign||'plus';window.setEditRlSgn(editRlSgn);
+  document.getElementById('editRlModal').classList.add('show');
+};
+window.saveEditRl=function(){
+  const id=parseInt(document.getElementById('editRlId').value);
+  const i=D.rules.findIndex(x=>x.id===id);if(i<0)return;
+  D.rules[i]={...D.rules[i],
+    name:document.getElementById('editRlN').value.trim(),
+    emoji:document.getElementById('editRlE').value.trim()||'⭐',
+    desc:document.getElementById('editRlD').value.trim(),
+    pts:parseInt(document.getElementById('editRlP').value)||1,
+    sign:editRlSgn
+  };
+  saveAll();renderRl();closeM('editRlModal');toast('✅ 規則已更新！');
+};
+window.delRl=function(id){
+  if(!confirm('確定刪除此規則？'))return;
+  D.rules=D.rules.filter(r=>r.id!==id);saveAll();renderRl();toast('規則已刪除');
+};
+
+/* ═══════════════════════════════
+   LOCAL BACKUP
+═══════════════════════════════ */
+window.exportData=function(){
+  const json=JSON.stringify(D,null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  const date=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'-');
+  a.href=url;a.download=`寶貝集點備份_${date}.json`;
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+  toast('✅ 備份檔案已下載！');
+};
+window.importData=function(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!data.scores||!data.history){toast('❌ 檔案格式錯誤');return;}
+      if(!confirm('確定要用此備份覆蓋現有資料？')){e.target.value='';return;}
+      D=Object.assign({},D,data);
+      D.rules=(D.rules||[]).map(r=>({sign:'plus',...r}));
+      saveAll();renderAll();
+      toast('✅ 資料還原成功！');
+    }catch{toast('❌ 檔案讀取失敗');}
+    e.target.value='';
+  };
+  reader.readAsText(file);
+};
+window.copyDataTxt=function(){
+  const txt=JSON.stringify(D);
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(()=>toast('📋 已複製！'));}
+  else{const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);toast('📋 已複製！');}
+};
+window.resetAllData=function(){
+  if(!confirm('確定清除所有資料？此操作無法復原！'))return;
+  D={scores:{沛辰:0,孟均:0},history:{沛辰:[],孟均:[]},rewards:D.rewards,rules:D.rules,rwCnt:D.rwCnt,rlCnt:D.rlCnt,roles:D.roles};
+  saveAll();renderAll();toast('🗑 資料已清除');
+};
+
+/* ═══════════════════════════════
+   MODAL / TOAST / CONFETTI
+═══════════════════════════════ */
+window.closeM=function(id){document.getElementById(id).classList.remove('show');};
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+let tt;
+window.toast=function(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2400);
+};
+function toast(msg){window.toast(msg);}
+function confetti(){
+  const cols=['#FFE66D','#FF6B6B','#4ECDC4','#A29BFE','#FD79A8','#55EFC4','#74B9FF','#FF6EB4','#3B82F6'];
+  for(let i=0;i<38;i++){
+    const c=document.createElement('div');c.className='cf';
+    c.style.cssText=`left:${Math.random()*100}vw;top:-10px;background:${cols[~~(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-delay:${Math.random()*.8}s;animation-duration:${1.5+Math.random()}s;`;
+    document.body.appendChild(c);setTimeout(()=>c.remove(),3000);
+  }
+}
+
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+load();
+renderAll();
+selectRole('dad');
+
+// Auto-connect Firebase if config saved
+const savedCfg = loadFbConfig();
+if(savedCfg){
+  initFb(savedCfg).catch(e=>{
+    updateFbUI(false);
+    toast('⚠️ Firebase 連接失敗，使用本機模式');
+  });
+} else {
+  // Show setup screen on first visit
+  document.getElementById('setupScreen').classList.remove('hide');
+}
+
+</script>
+</body>
+</html>
